@@ -1,0 +1,61 @@
+{% extends 'base.html'%}
+{% block content %}
+<div class="d-flex justify-content-between align-items-centre mb-3">
+    <h1>Stock Received</h1>
+
+</div>
+<div class="d-flex justify-content-end gap-2 mb-3">
+    <a href="{% url 'create_stock_receipt'%}" class="btn btn-success">Record Stock Received</a>
+<a href="{% url 'stock_report'%}" class=" btn btn-primary">Stock Report</a>
+</div>
+
+<table class="table table-bordered table-striped shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Poduct</th>
+            <th>Supplier</th>
+            <th>Quantity</th>
+            <th> Unit Cost</th>
+            <th>selling_price</th>
+            <th>Total Due</th>
+            <th>Paid</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        {% for receipt in receipts %}
+        <tr>
+            <td>{{ receipt.product.product_name}}</td>
+            <td>{{ receipt.supplier_name}}</td>
+            <td>{{ receipt.quantity_received}}</td>
+            <td>{{ receipt.unit_cost}}</td>
+            <td>{{receipt.selling_price}}</td>
+            <td>{{ receipt.total_amount_due}}</td>
+            <td>
+                {% if receipt.supplier_paid %}
+                <span class="badge bg-success">Paid</span>
+                {% else %}
+                <span class="badge bg-danger">Not Paid</span>
+                {% eddif %}
+
+            </td>
+            <td>{{ receipt.date_received|date:j F Y,H i }}</td>
+            <td>
+            <a href="{% url 'goods_received_note' receipt.id %}" class="btn btn-dark btn-sm">GRN</a>
+            <a href="{% url 'edit_stock_receipt receipt.id %}" class="btn btn-primary btn-sm">Edit</a>
+            <a href="{% url 'delete_stock_receipt' receipt.id %}" class="btn btn-danger btn-sm">Delete</a>
+</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" class="text_centre">No stoclk Found</td>
+
+        </tr>
+        {% endfor %}
+
+    </tbody>
+
+</table>
+{% endblock %}

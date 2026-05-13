@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-danger text-white">
+        <h4 class="mb-0">Add Stock Receipt</h4>
+    </div>
+    <div class="card-body">
+        <form method="POST"
+        {% csrf_token%}
+
+        <div class="mb-3">
+            <label class="form-label">Product</label>
+            <select name="product" class="form-select" required>
+                <option value="">Select product</option>
+
+                {% for product in products %}
+                <option value="{{product.id }}">
+                    {{product.product_name }}| Current Price:{{product.unit_price}}
+                </option>
+                {% ednfor %}
+            </select>
+        </div>
+
+
+        <div class="mb-3">
+            <label class="form-label">Supplier Name</label>
+            <input type="text" name="supplier_name" class="form-control"required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form=control">Quantity Received</label>
+            <input type="number" name="=quantity_received" class="form-control" min="1"required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-control">Unit Cost</label>
+            <input type="number" name="unit_cost" step="0.01" class="form-control" required>
+            <small class="text-muted">
+                This will update the products current unit cost
+        </div>
+
+<div class="mb-3">
+                <label class="form-label">selling_price</label>
+                <input type="number" name="selling_price" step="0.01" class="form-control" required>
+                <small class="text-muted">
+                    This will update the product's current selling price.
+                </small>
+            </div>
+
+             <div class="form-check mb-3">
+                <input type="checkbox" name="supplier_paid" class="form-check-input" id="supplier_paid">
+                <label class="form-check-label" for="supplier_paid">
+                    Supplier has been paid
+                </label>
+            </div>
+
+<button type="submit"class= "btn btn-success">Save Receipt</button>
+<a href="{% url 'stock-receipt_list' %}" class="btn btn-danger">Cancel</a>
+    
+        </form>
+
+    </div>
+
+</div>
+{% endblock %}

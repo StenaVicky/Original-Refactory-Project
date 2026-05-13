@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card shadow-sm">
+    <div class="card-header" style="background-color: #1a5f7a;" >
+        <h3 class="mb-0">Register Sale</h3>
+    </div>
+
+    <div class="card-body">
+        {% if error %}
+            <div class="alert alert-danger">
+            {{ error }}
+            </div>
+            {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Product</label>
+
+                <select name="product" class="form-select" required>
+                    <option value="">Select product</option>
+
+                    {% for product in products %}
+                    <option value="{{ product.id }}">
+                        {{ product.product_name }} |
+                        {{ product.category_name.category_name }} |
+                        {{ product.unit_price }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Quantity</label>
+                <input type="number" name="quantity" class="form-control" min="1" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Sale</button>
+            <a href="{% url 'home' %}" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

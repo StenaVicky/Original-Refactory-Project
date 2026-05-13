@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-3">Sales Report</h2>
+
+<form method="GET" class="card card-body shadow-sm mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">End Date</label>
+            <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary me-2">Filter</button>
+            <a href="{% url 'sales_report' %}" class="btn btn-secondary">Reset</a>
+        </div>
+    </div>
+</form>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Total Quantity Sold</h5>
+                <h3>{{ total_quantity_sold }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Total Sales Amount</h5>
+                <h3>{{ total_sales_amount }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered table-striped shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Total Price</th>
+            <th>Sale Date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for sale in sales %}
+        <tr>
+            <td>{{ sale.product_name.product_name }}</td>
+            <td>{{ sale.product_name.category_name.category_name }}</td>
+            <td>{{ sale.product_name.unit_price }}</td>
+            <td>{{ sale.quantity }}</td>
+            <td>{{ sale.total_price }}</td>
+            <td>{{ sale.sale_date|date:"j F Y, H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No sales found now.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
