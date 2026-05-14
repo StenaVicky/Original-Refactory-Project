@@ -6,8 +6,8 @@
         <h4 class="mb-0">Add Stock Receipt</h4>
     </div>
     <div class="card-body">
-        <form method="POST"
-        {% csrf_token%}
+        <form method="POST">
+        {% csrf_token %}
 
         <div class="mb-3">
             <label class="form-label">Product</label>
@@ -18,7 +18,7 @@
                 <option value="{{product.id }}">
                     {{product.product_name }}| Current Price:{{product.unit_price}}
                 </option>
-                {% ednfor %}
+                {% endfor %}
             </select>
         </div>
 
@@ -30,7 +30,7 @@
 
         <div class="mb-3">
             <label class="form=control">Quantity Received</label>
-            <input type="number" name="=quantity_received" class="form-control" min="1"required>
+            <input type="number" name="quantity_received" class="form-control" min="1"required>
         </div>
 
         <div class="mb-3">
@@ -56,7 +56,7 @@
             </div>
 
 <button type="submit"class= "btn btn-success">Save Receipt</button>
-<a href="{% url 'stock-receipt_list' %}" class="btn btn-danger">Cancel</a>
+<a href="{% url 'stock_receipt_list' %}" class="btn btn-danger">Cancel</a>
     
         </form>
 

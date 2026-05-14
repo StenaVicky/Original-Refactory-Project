@@ -33,7 +33,7 @@
             </tr>
             <tr>
                 <th>Total Amount Due</th>
-                <td><strong>{{receipt.total-amount_due}}</strong></td>
+                <td><strong>{{receipt.total_amount_due}}</strong></td>
             </tr>
             <tr>
                 <th>Supplier payment Status</th>
@@ -51,7 +51,7 @@
     </div>
 <div class="card-footer text-centre no-print">
     <button onclick="window.print()" class="btn btn-primary">Print GRN</button>
-    <a href="{url 'stock_receipt_list'%}" class="btn btn-secondary">Back to the Receipts</a>
+    <a href="{%url 'stock_receipt_list' %}" class="btn btn-secondary">Back to the Receipts</a>
 </div>
  </div>
  {% endblock %}
