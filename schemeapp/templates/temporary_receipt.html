@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 
 {% block content %}
@@ -55,7 +56,7 @@
                 <th>Amount Paid</th>
 
                 <td>
-                    {{ payment.amount_paid|floatformat:2 }}
+                    {{ payment.amount_paid|floatformat:2|intcomma }}
                 </td>
             </tr>
 

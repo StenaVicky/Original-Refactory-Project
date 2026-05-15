@@ -4,45 +4,37 @@
 
 <div class="card shadow-sm">
     <div class="card-header" style="background-color: #1a5f7a;">
-        <h3>Edit Product</h3>
+        <h3 style="text-align: center;font-family: geneva;">Edit Sale</h3>
     </div>
-
+<div>
+     <a href="{% url 'sales_report' %}" class="btn btn-success btn-sm">Sales Report</a>
+</div>
     <div class="card-body">
+
         <form method="POST">
             {% csrf_token %}
 
             <div class="mb-3">
-                <label class="form-label">Category</label>
+                <label class="form-label">Product</label>
 
-                <select name="category" class="form-select" required>
-                    {% for category in categories %}
-                    <option value="{{ category.id }}" {% if product.category_name.id == category.id %}selected{% endif %}>
-                        {{ category.category_name }}
+                <select name="product" class="form-select" required>
+                    {% for product in products %}
+                    <option value="{{ product.id }}" {% if sale.product.id == product.id %}selected{% endif %}>
+                        {{ product.product_name }} |
+                        {{ product.category.category_name }} |
+                        {{ product.price }}
                     </option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Product Name</label>
-                <input type="text" name="product_name" value="{{ product.product_name }}" class="form-control" required>
+                <label class="form-label">Quantity</label>
+                <input type="number" name="quantity" value="{{ sale.quantity }}" class="form-control" min="1" required>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Current Unit Price</label>
-                <input type="text" value="{{ product.unit_price }}" class="form-control" readonly>
-                <small class="text-muted">
-                    Unit price is controlled by stock receipts.
-                </small>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Description</label>
-                <textarea name="description" class="form-control" rows="4" required>{{ product.description }}</textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Update Product</button>
-            <a href="{% url 'product_list' %}" class="btn btn-danger">Cancel</a>
+            <button type="submit" class="btn btn-primary">Update Sale</button>
+            <a href="{% url 'home' %}" class="btn btn-danger">Cancel</a>
         </form>
     </div>
 </div>

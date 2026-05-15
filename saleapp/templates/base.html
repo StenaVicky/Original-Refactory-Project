@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -91,7 +92,7 @@
 
     <nav class="navbar top-navbar fixed-top navbar-dark" style="background-color: #1a5f7a;">
         <div class="container_fluid">
-            <a href="{% url 'home' %}" class="navbar-brand fw-bold" style="font-family:sans-serif"><img src="../static/stenalogo.png" alt="logo" width="70px" height="70px" class="me-2 rounded-circle"> Nyondo Hardware
+            <a href="{% url 'home' %}" class="navbar-brand fw-bold" style="font-family:sans-serif"><img src="{% static 'stenalogo.png' %}" alt="logo" width="70px" height="70px" class="me-2 rounded-circle"> Nyondo Hardware
                 System </a>
                 
 
@@ -102,10 +103,10 @@
     <div class="sidebar" style="border-radius: 5px; top: 60px;">
         
         <a href="{% url 'home' %}" class="btn btn-info btn-sm"><i class="bi bi-cart"></i> Sales</a><br>
-        <a href="{% url 'category_list' %}" class="btn btn-secondary btn-sm"><i class="bi bi-list"></i> Categories</a><br>
-        <a href="{% url 'product_list' %}" class="btn btn-success btn-sm"><i class="bi bi-box"></i> Products</a><br>
-        <a href="{% url 'stock_receipt_list' %}" class="btn btn-secondary btn-sm"><i class="bi bi-truck"></i> Stock</a><br>
-        <a href="{% url 'scheme_customer_list' %}" class="btn btn-secondary btn-sm"><i class="bi bi-percent"></i> Schemes</a><br>
+        <a href="{% url 'category_list' %}" ><i class="bi bi-list"></i> Categories</a><br>
+        <a href="{% url 'product_list' %}" ><i class="bi bi-box"></i> Products</a><br>
+        <a href="{% url 'stock_receipt_list' %}" ><i class="bi bi-truck"></i> Stock</a><br>
+        <a href="{% url 'scheme_customer_list' %}" ><i class="bi bi-percent"></i> Schemes</a><br>
 
     </div>
     <main class="main-content">
@@ -113,7 +114,7 @@
         {% endblock %}
     </main>
 
-    <footer>
+    <footer class="mt-5 mb-1">
         <p style="text-align: center; background-color: #1a5f7a; font-family: geneva;">Nyondo Hardware System
             Kampala-Nansana All rights resrved &copy; 2020-2026</p>
 

@@ -15,13 +15,13 @@ class StockReceipt(models.Model):
     re_order_level = models.IntegerField(default=10)
 
     def save(self, *args, **kwargs):
-        self.total_amount_due = self.quantity_received * self.unit_cost
+        self.total_amount = self.quantity_received * self.unit_cost
 
-        self.product.unit_price = self.selling_price
+        self.product.selling_price = self.selling_price
         self.product.save()
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.product.product_name} - {self.quantity_received}"
+        return f"{self.product.name} - {self.quantity_received}"
 

@@ -41,7 +41,7 @@
                        required>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-6">
                 <label class="form-label">Address</label>
 
                 <textarea name="address"
@@ -65,6 +65,16 @@
                        name="employer_name"
                        class="form-control">
             </div>
+            <div class="mb-3">
+    <label for="payment_plan" class="form-label">Payment Plan *</label>
+    <select name="payment_plan" id="payment_plan" class="form-select" required>
+        <option value="">Select Payment Plan</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Weekly">Weekly</option>
+        <option value="Quarterly">Quarterly</option>
+        <option value="Lump Sum">Lump Sum</option>
+    </select>
+</div>
 
             <button type="submit"
                     class="btn btn-success">

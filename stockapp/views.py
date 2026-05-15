@@ -135,7 +135,7 @@ def export_stock_report_excel(request):
         ).aggregate(total=Sum("quantity_received"))["total"] or 0
 
         total_sold = Sales.objects.filter(
-            product_name=product
+            product=product
         ).aggregate(total=Sum("quantity"))["total"] or 0
 
         current_stock = total_received - total_sold
@@ -149,7 +149,7 @@ def export_stock_report_excel(request):
 
         worksheet.append([
             product.product_name,
-            product.category_name.category_name,
+            product.category,
             total_received,
             total_sold,
             current_stock,

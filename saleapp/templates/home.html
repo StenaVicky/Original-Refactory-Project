@@ -1,42 +1,56 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block content %}
 
-<div class="card shadow-sm">
-    <div class="card-header" style="background-color: #1a5f7a;">
-        <h3 style="text-align: center;font-family: geneva;">Edit Sale</h3>
-    </div>
-<div>
-     <a href="{% url 'sales_report' %}" class="btn btn-success btn-sm">Sales Report</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Sales Records</h2>
+    
 </div>
-    <div class="card-body">
+<div class="d-flex justify-content-end gap-2 mb-3">
+            <a href="{% url 'create_sale' %}" class="btn btn-success">Register Sale</a>
+            <a href="{% url 'sales_report' %}" class="btn btn-success">Sales Report</a>
+        </div>
 
-        <form method="POST">
-            {% csrf_token %}
+<table class="table table-bordered table-striped shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Total Price</th>
+            <th>Sale Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
 
-            <div class="mb-3">
-                <label class="form-label">Product</label>
-
-                <select name="product" class="form-select" required>
-                    {% for product in products %}
-                    <option value="{{ product.id }}" {% if sale.product.id == product.id %}selected{% endif %}>
-                        {{ product.product_name }} |
-                        {{ product.category.category_name }} |
-                        {{ product.price }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Quantity</label>
-                <input type="number" name="quantity" value="{{ sale.quantity }}" class="form-control" min="1" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Update Sale</button>
-            <a href="{% url 'home' %}" class="btn btn-danger">Cancel</a>
-        </form>
-    </div>
-</div>
+    <tbody>
+        {% for sale in sales %}
+        <tr>
+            <td>{{ sale.product_name.product_name }}</td>
+            <td>{{ sale.product_name.category_name.category_name }}</td>
+            <td>{{ sale.product_name.unit_price|floatformat:2|intcomma }}</td>
+            <td>{{ sale.quantity }}</td>
+            <td>{{ sale.total_price|floatformat:2|intcomma }}</td>
+            <td>{{ sale.sale_date|date:"j F Y, H:i" }}</td>
+            <td>
+                <a href="{% url 'invoice' sale.id %}" class="btn btn-dark btn-sm">Invoice</a>
+                <a href="{% url 'edit_sale' sale.id %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'delete_sale' sale.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" class="text-center">No sales recorded yet.</td>
+        </tr>
+        {% endfor %}
+    <tr class="table-dark">
+    <td colspan="4" class="text-center align-middle"> <strong>Total Sales</strong> </td>
+    <td><strong>{{ total_sales_value|floatformat:2|intcomma }}</strong> </td>
+    <td colspan="2"></td>
+    </tr>
+    </tbody>
+</table>
 
 {% endblock %}

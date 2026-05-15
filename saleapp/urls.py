@@ -19,7 +19,7 @@ from saleapp import views
 
 
 urlpatterns = [
-    path("", views.home, name="home"),
+    path("/", views.home, name="home"),
     
     path("categories/", views.category_list, name="category_list"),
     path("categories/create/", views.create_category, name="create_category"),

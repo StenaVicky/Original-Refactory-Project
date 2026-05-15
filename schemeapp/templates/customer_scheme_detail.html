@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load humanize %}
 
 {% block content %}
 
@@ -15,7 +16,7 @@
                 <h5>Total Deposits</h5>
 
                 <h3>
-                    {{ total_paid|floatformat:2}}
+                    {{ total_paid|floatformat:2|intcomma }}
                 </h3>
             </div>
         </div>
@@ -27,7 +28,7 @@
                 <h5>Goods Picked Value</h5>
 
                 <h3>
-                    {{ total_goods_value|floatformat:2 }}
+                    {{ total_goods_value|floatformat:2|intcomma }}
                 </h3>
             </div>
         </div>
@@ -39,7 +40,7 @@
                 <h5>Balance</h5>
 
                 <h3>
-                    {{ balance|floatformat:2}}
+                    {{ balance|floatformat:2|intcomma }}
                 </h3>
             </div>
         </div>
@@ -77,10 +78,10 @@
 
         {% for payment in payments %}
         <tr>
-            <td>{{ payment.payment_date|date:"j F Y, H:i" }}</td>
+            <td>{{ payment.payment_date|date:"j F Y," }}</td>
 
             <td>
-                {{ payment.amount_paid|floatformat:2 }}
+                {{ payment.amount_paid|floatformat:2|intcomma }}
             </td>
 
             <td>{{ payment.notes }}</td>
