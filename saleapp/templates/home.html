@@ -32,7 +32,7 @@
             <td>{{ sale.product_name.category_name.category_name }}</td>
             <td>{{ sale.product_name.unit_price|floatformat:2|intcomma }}</td>
             <td>{{ sale.quantity }}</td>
-            <td>{{ sale.total_price|floatformat:2|intcomma }}</td>
+            <td>{{ sale.total_amount|floatformat:2|intcomma }}</td>
             <td>{{ sale.sale_date|date:"j F Y, H:i" }}</td>
             <td>
                 <a href="{% url 'invoice' sale.id %}" class="btn btn-dark btn-sm">Invoice</a>

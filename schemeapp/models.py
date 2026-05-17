@@ -1,4 +1,5 @@
 from django.db import models 
+from django.utils import timezone
 
 
 # Create your models here.
@@ -10,6 +11,7 @@ class SchemeCustomer(models.Model):
     occupation = models.CharField(max_length=255)
     employer_name = models.CharField(max_length=255)
     payment_plan = models.CharField(max_length=255, blank=True, null=True)
+    date_registered = models.DateField(default=timezone.now)
      
     def __str__(self):
         return self.full_name

@@ -39,10 +39,19 @@
                 <th>Quantity</th>
                 <td>{{ sale.quantity }}</td>
             </tr>
+              <tr>
+                <th>Transport Note</th>
+                <td>{{ sale.transport_note }}</td>
+            </tr>
+            
+            <tr>
+                <th>Transport Fee</th>
+                <td>{{ sale.transport }}</td>
+            </tr>
 
             <tr>
                 <th>Total Price</th>
-                <td><strong>{{ sale.total_price }}</strong></td>
+                <td><strong>{{ sale.total_amount }}</strong></td>
             </tr>
         </table>
 

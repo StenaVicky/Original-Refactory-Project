@@ -69,6 +69,10 @@ def login_view(request):
         if username == "admin" and password == "admin123":
             return redirect("dashboard")
     return render(request, "login.html")
+
+def logout(request):
+    
+    return render(request, 'logout.html')
        
            
     

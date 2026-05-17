@@ -17,6 +17,7 @@ Including another URLconf
 from django.urls import path,include
 from django.contrib import admin
 from . import views
+from django.contrib.auth import views as auth_views
 
 
 
@@ -28,5 +29,8 @@ urlpatterns = [
     path("saleapp/", include("saleapp.urls")),
     path("stockapp/", include("stockapp.urls")),
     path("schemeapp/",include("schemeapp.urls")),
-    
+     path('logout/', views.logout, name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/login/'), name='logout'),
 ]
+    
+    

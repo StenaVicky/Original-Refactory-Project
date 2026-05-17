@@ -3,6 +3,8 @@ from .models import SchemeCustomer, SchemePayment, SchemeGoodsPickup
 from saleapp.models import Product, Sales
 from django.db.models import Sum
 from stockapp.models import StockReceipt
+from django.utils import timezone
+from django.contrib import messages
 
 
 # Create your views here.
@@ -13,15 +15,33 @@ def scheme_customer_list(request):
 
 def register_scheme_customer(request):
     if request.method == 'POST':
+        nin_number = request.POST.get('nin_number')
+
+        phone_number = request.POST.get('phone_number')
+        if not phone_number.startswith(('0', '+256', '256')):
+            messages.error(request, "Phone number must start with 0, +256, or 256.")
+            return render(request, 'register_scheme_customer.html')
+        
+        if SchemeCustomer.objects.filter(phone_number=phone_number).exists():
+            messages.error(request, "A customer with this phone number already exists.")
+            return render(request, 'register_scheme_customer.html')
+        
+
+        if SchemeCustomer.objects.filter(nin_number=nin_number).exists():
+            messages.error(request, "A customer with this NIN number already exists.")
+            return render(request, 'register_scheme_customer.html')
         SchemeCustomer.objects.create(
-           full_name=request.POST.get('full_name'),
-           nin_number=request.POST.get('nin_number'),
-           phone_number=request.POST.get('phone_number'),
-             address=request.POST.get('address'),
-             occupation=request.POST.get('occupation'),
-             employer_name=request.POST.get('employer_name'),
-             payment_plan=request.POST.get('payment_plan'),
+            full_name=request.POST.get('full_name'),
+            nin_number=request.POST.get('nin_number'),
+            phone_number=request.POST.get('phone_number'),
+            address=request.POST.get('address'),
+            occupation=request.POST.get('occupation'),
+            employer_name=request.POST.get('employer_name'),
+            payment_plan=request.POST.get('payment_plan'),
+            date_registered=timezone.now(),
         )
+        # messages.success(request, "Customer registered successfully.")
+        
         return redirect('scheme_customer_list')
     return render(request, 'register_scheme_customer.html')
 

@@ -19,10 +19,10 @@ def create_stock_receipt(request):
     products = Product.objects.all()
 
     if request.method == "POST":
-        product = get_object_or_404(Product, id=request.POST.get("product"))
+        products = get_object_or_404(Product, id=request.POST.get("product"))
 
         receipt = StockReceipt.objects.create(
-            product=product,
+            product_name=request.POST.get("product_name"),
             supplier_name=request.POST.get("supplier_name"),
             quantity_received=int(request.POST.get("quantity_received")),
             unit_cost=float(request.POST.get("unit_cost")),

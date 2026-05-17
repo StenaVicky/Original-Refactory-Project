@@ -121,6 +121,7 @@ def create_sale(request):
         else:
             transport_fee = 30000
             transport_note = "Standard delivery fee"
+            product_total += transport_fee
         
         
         received = StockReceipt.objects.filter(product=product).aggregate(Sum('quantity_received'))['quantity_received__sum'] or 0
@@ -128,7 +129,7 @@ def create_sale(request):
         available = received - sold
         
         if qty > available:
-            return render(request, "add_sale.html", {
+            return render(request, "create_sale.html", {
                 'products': products,
                 'error': f'Only {available} items available'
             })
@@ -143,7 +144,7 @@ def create_sale(request):
             total_amount=product_total
         )
         
-        return redirect('view_invoice', sale_id=sale.id)
+        return redirect('invoice', sale_id=sale.id)
     
     return render(request, "create_sale.html", {'products': products})
 
