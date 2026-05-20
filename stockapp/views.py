@@ -4,6 +4,7 @@ from saleapp.models import Product, Sales
 from .models import StockReceipt
 from django.http import HttpResponse
 from openpyxl import Workbook
+from decimal import Decimal
 
 
 
@@ -19,14 +20,14 @@ def create_stock_receipt(request):
     products = Product.objects.all()
 
     if request.method == "POST":
-        products = get_object_or_404(Product, id=request.POST.get("product"))
+        product = get_object_or_404(Product, id=request.POST.get("product"))
 
         receipt = StockReceipt.objects.create(
-            product_name=request.POST.get("product_name"),
+            product=product,
             supplier_name=request.POST.get("supplier_name"),
             quantity_received=int(request.POST.get("quantity_received")),
-            unit_cost=float(request.POST.get("unit_cost")),
-            selling_price=float(request.POST.get("selling_price")),
+            unit_cost=Decimal(request.POST.get("unit_cost")),
+            selling_price=Decimal(request.POST.get("selling_price")or 0),
             supplier_paid=request.POST.get("supplier_paid") == "on"
         )
 
@@ -135,7 +136,7 @@ def export_stock_report_excel(request):
         ).aggregate(total=Sum("quantity_received"))["total"] or 0
 
         total_sold = Sales.objects.filter(
-            product=product
+            product_name=product
         ).aggregate(total=Sum("quantity"))["total"] or 0
 
         current_stock = total_received - total_sold
@@ -149,7 +150,7 @@ def export_stock_report_excel(request):
 
         worksheet.append([
             product.product_name,
-            product.category,
+            product.category_name.category_name,
             total_received,
             total_sold,
             current_stock,
@@ -165,3 +166,68 @@ def export_stock_report_excel(request):
     workbook.save(response)
 
     return response
+
+def supplier_report(request):
+    
+    suppliers = StockReceipt.objects.values('supplier_name').distinct()
+    
+    report_data = []
+    total_credit_owed = 0
+    total_paid = 0
+    
+    for supplier in suppliers:
+        supplier_name = supplier['supplier_name']
+        
+
+        receipts = StockReceipt.objects.filter(supplier_name=supplier_name)
+        
+        
+        total_quantity = receipts.aggregate(Sum('quantity_received'))['quantity_received__sum'] or 0
+        total_amount = receipts.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        
+        
+        paid_amount = receipts.filter(supplier_paid=True).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        
+        
+        credit_amount = receipts.filter(supplier_paid=False).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        
+        
+        credit_count = receipts.filter(supplier_paid=False).count()
+        paid_count = receipts.filter(supplier_paid=True).count()
+        
+        
+        last_receipt = receipts.order_by('-date_received').first()
+        last_date = last_receipt.date_received.date() if last_receipt else None
+        
+        
+        if credit_amount > 0 and paid_amount > 0:
+            status = "Partially Paid"
+        elif credit_amount > 0:
+            status = "On Credit"
+        else:
+            status = "Fully Paid"
+        
+        report_data.append({
+            'supplier_name': supplier_name,
+            'total_quantity': total_quantity,
+            'total_amount': total_amount,
+            'paid_amount': paid_amount,
+            'credit_amount': credit_amount,
+            'credit_count': credit_count,
+            'paid_count': paid_count,
+            'last_date': last_date,
+            'status': status,
+        })
+        
+        total_credit_owed += credit_amount
+        total_paid += paid_amount
+    
+    context = {
+        'report_data': report_data,
+        'total_credit_owed': total_credit_owed,
+        'total_paid': total_paid,
+        'total_suppliers': len(report_data),
+    }
+    
+    return render(request, 'supplier_report.html', context)
+

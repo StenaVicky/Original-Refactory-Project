@@ -5,6 +5,8 @@ from django.utils import timezone
 from datetime import timedelta
 from saleapp.models import Product, Sales
 from schemeapp.models import SchemeCustomer, SchemePayment
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 def dashboard(request):
     today = timezone.now().date()
@@ -73,6 +75,21 @@ def login_view(request):
 def logout(request):
     
     return render(request, 'logout.html')
+
+
+def sign_page(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, 'sign_up.html', {'form': form})
+
+
+
        
            
     

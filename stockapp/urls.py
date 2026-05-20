@@ -11,4 +11,5 @@ urlpatterns = [
     path("receipts/<int:receipt_id>/delete/", views.delete_stock_receipt, name="delete_stock_receipt"),
     path("report/", views.stock_report, name="stock_report"),
     path("report/export/", views.export_stock_report_excel, name="export_stock_report_excel"),
+    path("supplier_report/", views.supplier_report, name="supplier_report"),  
 ]

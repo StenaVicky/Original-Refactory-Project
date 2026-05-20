@@ -12,6 +12,7 @@ class Category(models.Model):
 class Product(models.Model):
     category_name = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=100)
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     description = models.TextField()
 

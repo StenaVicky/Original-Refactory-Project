@@ -1,5 +1,6 @@
 from django.db import models 
 from django.utils import timezone
+from saleapp.models import Sales, Product
 
 
 # Create your models here.
@@ -27,9 +28,9 @@ class SchemePayment(models.Model):
     
 class SchemeGoodsPickup(models.Model):
     customer = models.ForeignKey(SchemeCustomer, on_delete=models.CASCADE)
-    product = models.CharField(max_length=255)
-    quantity_taken = models.IntegerField()
-    linked_sale = models.ForeignKey(SchemePayment, on_delete=models.SET_NULL, null=True, blank=True)
+    product= models.ForeignKey( Product, on_delete=models.CASCADE)
+    quantity_taken = models.PositiveIntegerField()
+    linked_sale = models.ForeignKey(Sales, on_delete=models.SET_NULL, null=True, blank=True)
     pickup_date = models.DateField(auto_now_add=True)
 
     def __str__(self):

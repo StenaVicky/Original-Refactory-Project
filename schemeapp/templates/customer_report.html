@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Customer Report{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <h3 class="mb-3" style="color: #1a5f7a;">📋 Customer Report</h3>
+
+    
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="alert alert-primary text-center">
+                Total Customers<br>
+                <strong style="font-size: 24px;">{{ total_customers|default:0 }}</strong>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="alert alert-success text-center">
+                Total Deposits<br>
+                <strong>UGX {{ total_deposits|floatformat:0|intcomma }}</strong>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="alert alert-secondary text-center">
+                Total Withdrawn<br>
+                <strong>UGX {{ total_withdrawn|floatformat:0|intcomma }}</strong>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="alert alert-info text-center">
+                Total Balance<br>
+                <strong>UGX {{ total_balance|floatformat:0|intcomma }}</strong>
+            </div>
+        </div>
+    </div>
+
+    
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th class="text-end">Deposited</th>
+                <th class="text-end">Withdrawn</th>
+                <th class="text-end">Balance</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.phone }}</td>
+                <td class="text-end">UGX {{ customer.total_deposited|floatformat:0|intcomma }}</td>
+                <td class="text-end">UGX {{ customer.total_withdrawn|floatformat:0|intcomma }}</td>
+                <td class="text-end">
+                    <strong>UGX {{ customer.balance|floatformat:0|intcomma }}</strong>
+                </td>
+                <td>
+                    {% if customer.balance > 0 %}
+                        <span class="badge bg-success">Has Credit</span>
+                    {% elif customer.balance < 0 %}
+                        <span class="badge bg-danger">Overdrawn</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Settled</span>
+                    {% endif %}
+                </td>
+             </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No customers found</td>
+             </tr>
+            {% endfor %}
+        </tbody>
+     </table>
+
+</div>
+{% endblock %}

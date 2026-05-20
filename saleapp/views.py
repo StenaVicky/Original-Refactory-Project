@@ -5,6 +5,8 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from openpyxl import Workbook
 from datetime import date, timedelta
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 
 def home(request):
@@ -18,25 +20,25 @@ def home(request):
 
 
 def dashboard(request):
-    # Today
+    
     today_sales = Sales.objects.filter(sale_date__date=date.today())
     today_total = today_sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     
-    # This week
+    
     week_ago = date.today() - timedelta(days=7)
     week_sales = Sales.objects.filter(sale_date__date__gte=week_ago)
     week_total = week_sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     
-    # All time
+    
     all_sales = Sales.objects.all()
     all_total = all_sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     
     return render(request, "dashboard.html", {
         'today_total': today_total,
         'week_total': week_total,
-        'all_total': all_total
-    })
-
+        'all_total': all_total,
+        'notifications': [{'title': 'Test', 'message': 'Working!', 'icon': 'bi bi-bell', 'link': '/'}],
+})
 
 def category_list(request):
     categories = Category.objects.all()
@@ -69,6 +71,7 @@ def create_product(request):
         Product.objects.create(
             category_name=cat,
             product_name=request.POST.get('product_name'),
+            cost_price=request.POST.get('cost_price', 0),
             unit_price=request.POST.get('unit_price', 0),
             description=request.POST.get('description', '')
         )
@@ -76,8 +79,8 @@ def create_product(request):
     
     return render(request, "create_product.html", {'categories': categories})
 
-def edit_product(request, id):
-    product = get_object_or_404(Product, id=id)
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
     
     if request.method == "POST":
@@ -94,8 +97,8 @@ def edit_product(request, id):
         'categories': categories
     })
 
-def delete_product(request, id):
-    product = get_object_or_404(Product, id=id)
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
     if request.method == "POST":
         product.delete()
         return redirect('product_list')
@@ -106,7 +109,7 @@ def create_sale(request):
     products = Product.objects.all()
     
     if request.method == "POST":
-        # Get form data
+        
         product = get_object_or_404(Product, id=request.POST.get('product'))
         qty = int(request.POST.get('quantity'))
         distance = float(request.POST.get('distance', 0))
@@ -152,8 +155,8 @@ def invoice(request, sale_id):
     sale = get_object_or_404(Sales, id=sale_id)
     return render(request, "invoice.html", {'sale': sale})
 
-def edit_sale(request, id):
-    sale = get_object_or_404(Sales, id=id)
+def edit_sale(request, sale_id):
+    sale = get_object_or_404(Sales, id= sale_id)
     products = Product.objects.all()
     
     if request.method == "POST":
@@ -185,8 +188,8 @@ def edit_sale(request, id):
         'products': products
     })
 
-def delete_sale(request, id):
-    sale = get_object_or_404(Sales, id=id)
+def delete_sale(request, sale_id):
+    sale = get_object_or_404(Sales, id=sale_id)
     if request.method == "POST":
         sale.delete()
         return redirect('home')
@@ -251,3 +254,4 @@ def export_sales_report_excel(request):
     response['Content-Disposition'] = 'attachment; filename="sales.xlsx"'
     wb.save(response)
     return response
+

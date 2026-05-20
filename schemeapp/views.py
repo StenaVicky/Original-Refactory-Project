@@ -9,7 +9,7 @@ from django.contrib import messages
 
 # Create your views here.
 def scheme_customer_list(request):
-    customers = SchemeCustomer.objects.all()
+    customers = SchemeCustomer.objects.all().order_by("-date_registered")
     return render(request, 'scheme_customer_list.html', {'customers': customers})
 
 
@@ -49,12 +49,13 @@ def register_scheme_customer(request):
 def record_scheme_payment(request, customer_id):
     customer =get_object_or_404(SchemeCustomer, id=customer_id)
     if request.method =='POST':
-        SchemePayment.objects.create(
+      payment=  SchemePayment.objects.create(
             customer=customer,
             amount_paid=request.POST.get('amount_paid'),
+            notes=request.POST.get("notes")
             
         )
-        return redirect('scheme_customer_list')
+      return redirect("temporary_receipt",payment_id=payment.id)
     return render(request, "record_scheme_payment.html",{"customer":customer})
 
 def temporary_receipt(request, payment_id):
@@ -66,11 +67,11 @@ def customer_scheme_detail(request, customer_id):
     payments = SchemePayment.objects.filter(customer=customer)
     pickups = SchemeGoodsPickup.objects.filter(customer=customer)
     total_paid = sum(payment.amount_paid for payment in payments)
-    total_goods_value = 0
-    for pickup in pickups:
-        total_goods_value += pickup.quantity_taken * pickup.product.unit_price
-
+    total_goods_value = sum(
+      pickup.quantity_taken * pickup.product.unit_price for pickup in pickups  
+    )
     balance = total_paid - total_goods_value
+
     return render(request,'customer_scheme_detail.html', {
         'customer': customer,
         'payments': payments,
@@ -84,34 +85,32 @@ def scheme_goods_pickup(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     products = Product.objects.filter(
         category_name__category_name__in=[
-            "Cement",
-            "Iron Sheets",
-            "Bars",
+            "cement",
+            "iron sheets",
+            "Iron bars",
         ]
     )
+    # products = Product.objects.all()
     if  request.method == "POST":
-        product = get_object_or_404(Product, id=request.POST.get("product_id"))
+        product = get_object_or_404(Product, id=request.POST.get('product'))
         quantity = int(request.POST.get("quantity"))
-        total_received = StockReceipt.objects.filter(
-            product=product
-        ).aggregate(total=Sum("quantity_received"))["total"] or 0
-        total_sold = Sales.objects.filter(
-            product_name=product
-        ).aggregate(total=Sum("quantity"))["total"] or 0
+        total_received = StockReceipt.objects.filter(product=product).aggregate(total=Sum('quantity_received'))['total'] or 0
+        total_sold = Sales.objects.filter( product_name=product ).aggregate(total=Sum("quantity"))["total"] or 0
         available_stock = total_received - total_sold
-        if quantity > available_stock:
-            return render(request, "schemeapp/scheme_goods_pickup.html", {
-                "customer": customer,
-                "products": product,
-                "error": f"Not enough stock.Available stock is { available_stock }."
-            })
-        total_price = product.selling_price * quantity
 
+        if quantity > available_stock:
+            return render(request, "scheme_goods_pickup.html", {
+                "customer": customer,
+                "products": products,
+                "error": f"Not enough stock. Available stock is {available_stock}."
+            })
+
+        total_price = product.unit_price * quantity
+    
         sale = Sales.objects.create(
             product_name=product,
             quantity=quantity,
-            unit_selling_price=product.selling_price,
-            total_amount=total_price,
+            total_price=total_price,
             
         )
 
@@ -127,3 +126,41 @@ def scheme_goods_pickup(request, customer_id):
          "customer": customer,
          "products": products
    })
+def customer_report(request):
+    customers = SchemeCustomer.objects.all()
+    
+    customer_data = []
+    total_deposits = 0
+    total_withdrawn = 0
+    total_balance = 0
+    
+    for customer in customers:
+        payments = SchemePayment.objects.filter(customer=customer)
+        total_deposited = sum(p.amount_paid for p in payments)
+        
+        pickups = SchemeGoodsPickup.objects.filter(customer=customer)
+        total_withdrawn_amount = sum(p.quantity_taken * p.product.selling_price for p in pickups)
+        
+        balance = total_deposited - total_withdrawn_amount
+        
+        customer_data.append({
+            'name': customer.full_name,
+            'phone': customer.phone_number,
+            'total_deposited': total_deposited,
+            'total_withdrawn': total_withdrawn_amount,
+            'balance': balance,
+        })
+        
+        total_deposits += total_deposited
+        total_withdrawn += total_withdrawn_amount
+        total_balance += balance
+    
+    context = {
+        'customers': customer_data,
+        'total_customers': len(customer_data),
+        'total_deposits': total_deposits,
+        'total_withdrawn': total_withdrawn,
+        'total_balance': total_balance,
+    }
+    
+    return render(request, 'customer_report.html', context) 

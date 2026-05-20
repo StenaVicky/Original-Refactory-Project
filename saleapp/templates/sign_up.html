@@ -1,0 +1,94 @@
+
+<!-- {% block title %}Welcome To Nyondo Hardware System {% endblock %} -->
+ <h1 style="text-align: center; font-family: geneva; background-color: #1a5f7a; border-radius: 5px;"> <img src="../static/stenalogo.png" alt="logo" width="100px" height="100px">Welcome To Nyondo Hardware System</h1>
+ 
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+   
+<div class="login-container">
+    <div class="login-card">
+        
+        <div class="logo-icon mx-auto">
+            <i class="fas fa-hard-hat"></i>
+        </div>
+        <h2 class="text-center" style="color: #1a5f7a;">Create Account</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3" style="width: 600px; padding: 10px; display: flex; justify-content: center; align-items: center;">
+                <label class="form-label">Username:</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            
+            <div class="mb-3" style="width: 600px; padding: 10px; display:flex;">
+                <label class="form-label">Password:</label>
+                <input type="password" name="password1" class="form-control" required>
+            </div>
+            
+            <div class="mb-3" style="width: 600px; padding: 10px; display: flex;">
+                <label class="form-label">Confirm Password:</label>
+                <input type="password" name="password2" class="form-control" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-">Sign Up</button>
+        </form>
+        
+        <div class="text-center mt-3">
+            <a href="{% url 'sign_up' %}" style="color: #e86a2c;">Already have an account?</a>
+           <a href="/login/">Login</a>
+        </div>
+    </div>
+</div>
+<footer style="background-color: #1a5f7a; color: white; padding: 30px 0 15px 0; margin-top: 20px;">
+    <div class="container">
+        <div class="row">
+            
+            <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                <h5 style="color: #e86a2c;">Nyondo Hardware</h5>
+                <p class="small mb-1">Nansana-Kampala</p>
+                <p class="small mb-1">Tel: +256 759795859</p>
+                <p class="small">Email: info@nyondohardware.ug</p>
+            </div>
+            
+            
+            <div class="col-md-4 text-center mb-3 mb-md-0">
+                <h5 style="color: #e86a2c;">Follow Us</h5>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="https://facebook.com/nyondohardware" target="_blank" class="text-white" style="font-size: 24px;">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://instagram.com/nyondohardware" target="_blank" class="text-white" style="font-size: 24px;">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/nyondohardware" target="_blank" class="text-white" style="font-size: 24px;">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                    <a href="https://wa.me/256700123456" target="_blank" class="text-white" style="font-size: 24px;">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                </div>
+                <p class="small mt-2">Connect with us on social media</p>
+            </div>
+            
+            
+            <div class="col-md-4 text-center text-md-end">
+                <h5 style="color: #e86a2c;">Quick Links</h5>
+                <p class="small mb-1"><a href="/" style="color: white; text-decoration: none;">Home</a></p>
+                <p class="small mb-1"><a href="/saleapp/products/" style="color: white; text-decoration: none;">Products</a></p>
+                <p class="small"><a href="/schemeapp/" style="color: white; text-decoration: none;">Credit Scheme</a></p>
+              
+</a>
+            </div>
+        </div>
+        <hr class="my-3" style="border-color: rgba(255,255,255,0.2);">
+        <div class="text-center">
+            <small>&copy; 2026 NYONDO Hardware. All rights reserved.</small>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}

@@ -4,12 +4,16 @@
 {% block title %}Dashboard - Nyondo Hardware System{% endblock %}
 
 {% block content %}
+
 <div class="container-fluid">
+
+
 
     <!-- Welcome Header -->
     <div class="row mb-3">
         <div class="col-12">
-            <div class="p-4 rounded" style="background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4f 100%); color: white;">
+            <div class="p-4 rounded"
+                style="background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4f 100%); color: white;">
                 <div class="row">
                     <div class="col-8">
                         <h2 class="mb-2">Nyondo Hardware System</h2>
@@ -21,151 +25,223 @@
                 </div>
                 <hr class="my-3 opacity-25">
                 <p class="mb-0">
-                    <i class="fas fa-chart-line me-2"></i> 
+                    <i class="fas fa-chart-line me-2"></i>
                     Welcome back! Track your sales, manage inventory, and monitor credit scheme all in one place.
                 </p>
             </div>
         </div>
     </div>
 
-    <div class="row mb-4 g-3">
-        <div class="col-xl-3 col-md-6">
-            <div class="card text-center p-3 shadow-sm h-100" style="border-top: 6px solid #e86a2c;">
-        
-                <div class="text-muted small text-uppercase">Today's Sales</div>
-                <h2 class="mb-0 mt-2" style="color: #1a5f7a;">UGX {{ today_sales|default:0|floatformat:0|intcomma }}</h2>
-                <small class="text-muted">{{ today_count|default:0 }} transactions today</small>
-                <hr>
-                <a href="/saleapp/sales/report/" style="color: #e86a2c; text-decoration: none;">View Details →</a>
-            </div>
-        </div>
 
-        
-        <div class="col-xl-3 col-md-6">
-            <div class="card text-center p-3 shadow-sm h-100" style="border-top: 6px solid #e86a2c;">
-                <div class="text-muted small text-uppercase">Total Stock Value</div>
-                <h2 class="mb-0 mt-2" style="color: #1a5f7a;">UGX {{ stock_value|default:0|floatformat:0|intcomma }}</h2>
-                <small class="text-muted">{{ total_products|default:0 }} active products</small>
-                <hr>
-                <a href="saleapp/products/" style="color: #e86a2c; text-decoration: none;">Manage Stock →</a>
-            </div>
-        </div>
+</div>
+</div>
+</div>
+</div>
 
-        
-        <div class="col-xl-3 col-md-6" >
-            <div class="card text-center p-3 shadow-sm h-100" style="border-top: 6px solid #e86a2c;">
-                <div class="text-muted small text-uppercase">Credit Scheme Balance</div>
-                <h2 class="mb-0 mt-2" style="color: #1a5f7a;">UGX {{ credit_balance|default:0|floatformat:0|intcomma }}</h2>
-                <small class="text-muted">{{ credit_customers|default:0 }} active members</small>
-                <hr>
-                <a href="/schemeapp/" style="color: #e86a2c; text-decoration: none;">Manage Scheme →</a>
-            </div>
-        </div>
 
-        
-        <div class="col-xl-3 col-md-6">
-            <div class="card text-center p-3 shadow-sm h-100" style="border-top: 6px solid #e86a2c;">
-                <div class="text-muted small text-uppercase">Low Stock Alert</div>
-                <h2 class="mb-0 mt-2" style="color: #e86a2c;">{{ low_stock_count|default:0 }}</h2>
-                <small class="text-muted">products need reorder</small>
-                <hr>
-                <a href="/saleapp/products/" style="color: #e86a2c; text-decoration: none;">Reorder Now →</a>
+
+<div class="row mb-3 g-3">
+    <div class="col-xl-3 col-md-4">
+        <div class="card text-center p-1 shadow-sm h-70" style="border-top: 6px solid #e86a2c;">
+            <div class="text-muted small text-uppercase">Today's Sales</div>
+            <h2 class="mb-0 mt-2" style="color: #1a5f7a;">UGX {{ today_sales|default:0|floatformat:0|intcomma }}</h2>
+            <small class="text-muted">{{ today_count|default:0 }} transactions today</small>
+            <hr>
+            <a href="/saleapp/sales/report/" style="color: #e86a2c; text-decoration: none;">View Details →</a>
         </div>
-        
     </div>
-<br><br>
-    <!-- Weekly Sales Summary Table -->
-    <div class="row mb-6">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
-                    <h5 class="mb-4">
-                        <i class="fas fa-calendar-week me-2" style="color: #e86a2c;"></i><br><hr>
-                        Weekly Sales Summary
-                    </h5>
-                    <small class="text-muted">Last 7 days performance</small>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card text-center p-1 shadow-sm h-70" style="border-top: 6px solid #e86a2c;">
+            <div class="text-muted small text-uppercase">Total Stock Value</div>
+            <h2 class="mb-0 mt-2" style="color: #1a5f7a;">UGX {{ stock_value|default:0|floatformat:0|intcomma }}</h2>
+            <small class="text-muted">{{ total_products|default:0 }} active products</small>
+            <hr>
+            <a href="/saleapp/products/" style="color: #e86a2c; text-decoration: none;">Manage Stock →</a>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card text-center p-1 shadow-sm h-70" style="border-top: 6px solid #e86a2c;">
+            <div class="text-muted small text-uppercase">Credit Scheme Balance</div>
+            <h2 class="mb-0 mt-2" style="color: #1a5f7a;">UGX {{ credit_balance|default:0|floatformat:0|intcomma }}</h2>
+            <small class="text-muted">{{ credit_customers|default:0 }} active members</small>
+            <hr>
+            <a href="/schemeapp/" style="color: #e86a2c; text-decoration: none;">Manage Scheme →</a>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card text-center p-1 shadow-sm h-70" style="border-top: 6px solid #e86a2c;">
+            <div class="text-muted small text-uppercase">Low Stock Alert</div>
+            <h2 class="mb-0 mt-2" style="color: #e86a2c;">{{ low_stock_count|default:0 }}</h2>
+            <small class="text-muted">products need reorder</small>
+            <hr>
+            <a href="/saleapp/products/" style="color: #e86a2c; text-decoration: none;">Reorder Now →</a>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mb-3">
+    <div class="col-12">
+        <a href="{% url 'supplier_report' %}" class="btn" style="background-color: #1a5f7a; color: white;">
+            <i class="bi bi-truck me-2"></i> Supplier Report
+        </a>
+    </div>
+</div>
+
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-week me-2" style="color: #e86a2c;"></i>
+                    Weekly Sales Summary
+                </h5>
+                <small class="text-muted">Last 7 days performance</small>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead style="background-color: #1a5f7a; color: white;">
+                            <tr>
+                                <th class="p-1">Day</th>
+                                <th class="p-1">Date</th>
+                                <th class="p-1 text-center">Orders</th>
+                                <th class="p-1 text-end">Total Sales</th>
+                                <th class="p-1 text-end">Average Order</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in weekly_sales %}
+                            <tr>
+                                <td class="p-2">{{ day.day_name }}</td>
+                                <td class="p-2">{{ day.date|date:"M d, Y" }}</td>
+                                <td class="p-2 text-center">{{ day.order_count }}</td>
+                                <td class="p-2 text-end">UGX {{ day.total|floatformat:0|intcomma }}</td>
+                                <td class="p-2 text-end">UGX {{ day.average|floatformat:0|intcomma }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center p-5 text-muted">
+                                    <i class="fas fa-chart-line fa-2x mb-2 d-block"></i>
+                                    No sales data available
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead style="background-color: #1a5f7a; color: white;">
-                                <tr>
-                                    <th class="p-3">Day</th>
-                                    <th class="p-3">Date</th>
-                                    <th class="p-3 text-center">Orders</th>
-                                    <th class="p-3 text-end">Total Sales</th>
-                                    <th class="p-3 text-end">Average Order</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for day in weekly_sales %}
-                                <tr>
-                                    <td class="p-3">{{ day.day_name }}</td>
-                                    <td class="p-3">{{ day.date|date:"M d, Y" }}</td>
-                                    <td class="p-3 text-center">{{ day.order_count }}</td>
-                                    <td class="p-3 text-end">UGX {{ day.total|floatformat:0|intcomma }}</td>
-                                    <td class="p-3 text-end">UGX {{ day.average|floatformat:0|intcomma }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5" class="text-center p-5 text-muted">
-                                        <i class="fas fa-chart-line fa-2x mb-2 d-block"></i>
-                                        No sales data available
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header" style="background-color: #1a5f7a; color: white;">
+                <h5 class="mb-0"><i class="bi bi-trophy me-2"></i> Top Selling Products</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Cement</span>
+                        <span class="badge bg-primary">450 sold</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Iron Bars</span>
+                        <span class="badge bg-primary">320 sold</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Nails</span>
+                        <span class="badge bg-primary">250 sold</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Iron Sheets</span>
+                        <span class="badge bg-primary">180 sold</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Wire Mesh</span>
+                        <span class="badge bg-primary">95 sold</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header" style="background-color: #1a5f7a; color: white;">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i> Recent Activity</h5>
+            </div>
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Low Stock:</strong> Cement (5 left), Iron Bars (8 left)
+                <a href="/saleapp/" class="float-end">Order Now</a>
+            </div>
+            <div class="alert alert-warning">
+                <i class="bi bi-credit-card"></i>
+                <strong>Pending Credit:</strong> 3 customers owe UGX 1,500,000
+                <a href="/schemeapp/" class="float-end">View →</a>
+            </div>
+            <div class="card-body">
+                <p>Latest sales, deposits, etc.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt me-2" style="color: #e86a2c;"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3 col-6">
+                        <a href="/saleapp/sales/create/" class="btn w-100 py-3"
+                            style="background-color: #1a5f7a; color: white;">
+                            <i class="bi bi-cart-plus fa-2x d-block mb-2"></i>
+                            New Sale
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="{% url 'product_list' %}" class="btn w-100 py-3"
+                            style="background-color: #72bad3; color: white;">
+                            <i class="bi bi-box fa-2x d-block mb-2"></i>
+                            Products
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="{% url 'scheme_customer_list' %}" class="btn w-100 py-3"
+                            style="background-color: #e86a2c; color: white;">
+                            <i class="bi bi-percent fa-2x d-block mb-2"></i>
+                            Credit Scheme
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="{% url 'stock_report' %}" class="btn w-100 py-3"
+                            style="background-color: #6c757d; color: white;">
+                            <i class="bi bi-graph-up fa-2x d-block mb-2"></i>
+                            Stock Report
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
-                    <h5 class="mb-5">
-                        <i class="fas fa-bolt me-2" style="color: #e86a2c;"></i>
-                        Quick Actions
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-3 col-6">
-                            <a href="/saleapp/sales/create/" class="btn w-100 py-3" style="background-color: #1a5f7a; color: white;">
-                                <i class="bi bi-cart-plus fa-2x d-block mb-2"></i>
-                                
-                                New Sale
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <a href="{% url 'product_list' %}" class="btn w-100 py-3" style="background-color: #28a745; color: white;">
-                                <i class="bi bi-box fa-2x d-block mb-2"></i>
-                                Products
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <a href="{% url 'scheme_customer_list' %}" class="btn w-100 py-3" style="background-color: #e86a2c; color: white;">
-                                <i class="bi bi-percent
-                                fa-2x d-block mb-2"></i>
-                                Credit Scheme
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <a href="{% url 'stock_report' %}" class="btn w-100 py-3" style="background-color: #6c757d; color: white;">
-                                <i class="bi bi-graph-up fa-solid fa-2x d-block mb-2"></i>
-                                Stock Report
-                                 
-                                
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 {% endblock %}

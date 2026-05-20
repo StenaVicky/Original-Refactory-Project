@@ -16,8 +16,9 @@ class StockReceipt(models.Model):
 
     def save(self, *args, **kwargs):
         self.total_amount = self.quantity_received * self.unit_cost
+        self.product.cost_price= self.unit_cost
 
-        self.product.selling_price = self.selling_price
+        self.product.unit_price = self.selling_price
         self.product.save()
 
         super().save(*args, **kwargs)
