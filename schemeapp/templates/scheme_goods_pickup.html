@@ -16,12 +16,6 @@
             Customer:
             <strong>{{ customer.full_name }}</strong>
         </h5>
-        {% if error %}
-        <div class="alert alert-danger">
-            {{ error }}
-        </div>
-        {% endif %}
-
         <form method="POST">
 
             {% csrf_token %}

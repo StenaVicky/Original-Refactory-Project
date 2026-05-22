@@ -1,68 +1,80 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0" style="font-size: 0.95rem;">
+                <div class="card-header  text-white py-3" style="background-color: #1a5f7a;">
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+                        <div>
+                            <h4 class="mb-1 fw-semibold">Sales Invoice</h4>
+                            <p class="mb-0 small text-white-75">Official receipt from Nyondo Hardware Sales System</p>
+                        </div>
+                        <div class="text-sm-end">
+                            <span class="d-block small">Invoice No:</span>
+                            <strong>INV-{{ sale.id }}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3">
+                        <div class="col-sm-6">
+                            <p class="mb-1 small text-uppercase text-muted">Sale Date</p>
+                            <p class="mb-0">{{ sale.sale_date|date:"j F Y, H:i" }}</p>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <p class="mb-1 small text-uppercase text-muted">Customer</p>
+                            <p class="mb-0">{{ sale.customer_name|default:"Walk-in Customer" }}</p>
+                        </div>
+                    </div>
 
-<div class="card shadow-sm mx-auto" style="max-width: 700px;">
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-dark small">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Line Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td>{{ item.product.product_name }}</td>
+                                    <td>UGX {{ item.unit_price|floatformat:0 }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>UGX {{ item.line_total|floatformat:0 }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center small">No line items available for this invoice.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
 
-    <div class="card-header bg-dark text-white text-center">
-        <h3 class="mb-0">Sales Invoice</h3>
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <p class="small text-uppercase text-muted mb-1">Notes</p>
+                            <p class="small text-muted mb-0">Thank you for your purchase. Please keep this invoice for your records.</p>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded-3 p-3 bg-light text-end">
+                                <p class="small text-uppercase text-muted mb-1">Total Amount</p>
+                                <h4 class="mb-0">UGX {{ sale.total_amount|floatformat:0 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center no-print py-3">
+                    <button onclick="window.print()" class="btn btn-primary btn-sm px-4">Print Receipt</button>
+                    <a href="{% url 'home' %}" class="btn btn-danger btn-sm px-4">Back to Sales</a>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="card-body">
-        <h4 class="text-center"> Nyondo Hardware Sales System</h4>
-        <p class="text-center text-muted">Official Receipt</p>
-
-        <hr>
-
-        <p><strong>Invoice Number:</strong> INV-{{ sale.id }}</p>
-        <p><strong>Date:</strong> {{ sale.sale_date|date:"j F Y, H:i" }}</p>
-
-        <hr>
-
-        <table class="table table-bordered">
-            <tr>
-                <th>Product</th>
-                <td>{{ sale.product_name.product_name }}</td>
-            </tr>
-
-            <tr>
-                <th>Category</th>
-                <td>{{ sale.product_name.category_name.category_name }}</td>
-            </tr>
-
-            <tr>
-                <th>Unit Price</th>
-                <td>{{ sale.product_name.unit_price}}</td>
-            </tr>
-
-            <tr>
-                <th>Quantity</th>
-                <td>{{ sale.quantity }}</td>
-            </tr>
-              <tr>
-                <th>Transport Note</th>
-                <td>{{ sale.transport_note }}</td>
-            </tr>
-            
-            <tr>
-                <th>Transport Fee</th>
-                <td>{{ sale.transport }}</td>
-            </tr>
-
-            <tr>
-                <th>Total Price</th>
-                <td><strong>{{ sale.total_amount }}</strong></td>
-            </tr>
-        </table>
-
-        <p class="text-center mt-4">Thank you!!.</p>
-    </div>
-
-    <div class="card-footer text-center no-print">
-        <button onclick="window.print()" class="btn btn-primary">Print Receipt</button>
-        <a href="{% url 'home' %}" class="btn btn-danger">Back to Sales</a>
-    </div>
-
 </div>
-
 {% endblock %}

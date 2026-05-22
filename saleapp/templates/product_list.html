@@ -30,8 +30,8 @@
             <td>{{ product.unit_price }}</td>
             <td>{{ product.description }}</td>
             <td>
-                <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm">Edit</a>
-                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm">Delete</a>
+                <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
                 
 
             </td>

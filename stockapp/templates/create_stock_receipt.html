@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="card shadow-sm">
-    <div class="card-header bg-secondary text-white">
+    <div class="card-header text-white" style="background-color: #1a5f7a;">
         <h4 class="mb-0">Add Stock Receipt</h4>
     </div>
     <div class="card-body">
@@ -11,7 +11,7 @@
 
         <div class="mb-3">
             <label class="form-label">Product</label>
-            <select name="product" class="form-select" required>
+            <select name="product" class="form-select"  required>
                 <option value="">Select product</option>
 
                 {% for product in products %}
@@ -30,23 +30,20 @@
 
         <div class="mb-3">
             <label class="form=control">Quantity Received</label>
-            <input type="number" name="quantity_received" class="form-control" min="1"required>
+            <input type="number" name="quantity_received" class="form-control" min="1" required>
         </div>
 
         <div class="mb-3">
-            <label class="form-control">Unit Cost</label>
-            <input type="number" name="unit_cost" step="0.01" class="form-control" required>
-            <small class="text-muted">
-                This will update the products current unit cost
+            <label class="form-label">Unit Cost</label>
+            <input type="number" name="unit_cost" step="0.01" min="0.01" class="form-control" required>
+            <small class="text-muted">This will update the product's current unit cost.</small>
         </div>
 
-<div class="mb-3">
-                <label class="form-label">selling_price</label>
-                <input type="number" name="selling_price" step="0.01" class="form-control" required>
-                <small class="text-muted">
-                    This will update the product's current selling price.
-                </small>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Selling Price</label>
+            <input type="number" name="selling_price" step="0.01" min="0.01" class="form-control" required>
+            <small class="text-muted">This will update the product's current selling price.</small>
+        </div>
 
              <div class="form-check mb-3">
                 <input type="checkbox" name="supplier_paid" class="form-check-input" id="supplier_paid">

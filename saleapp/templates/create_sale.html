@@ -1,52 +1,106 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-9">
+            <div class="card shadow-sm border-0" style="font-size: 0.92rem;">
+                <div class="card-header text-white py-3" style="background-color: #1a5f7a;">
+                    <h4 class="mb-1 fw-semibold">Register Multi-Product Sale</h4>
+                    <p class="mb-0 small text-white-75">Choose one or more products, add quantities, then save the sale.</p>
+                </div>
 
-<div class="card shadow-sm">
-    <div class="card-header" style="background-color: hsl(197, 65%, 29%);" >
-        <h3 class="mb-0">Register Sale</h3>
-    </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="sale-form">
+                        {% csrf_token %}
 
-    <div class="card-body">
-        {% if error %}
-            <div class="alert alert-danger">
-            {{ error }}
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label small fw-medium">Customer Name (optional)</label>
+                                <input type="text" name="customer_name" class="form-control form-control-sm" placeholder="Walk-in Customer">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-medium">Distance</label>
+                                <input type="number" name="distance" class="form-control form-control-sm" min="1" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div id="sale-items">
+                            <div class="row g-3 align-items-end sale-item-row">
+                                <div class="col-md-7">
+                                    <label class="form-label small fw-medium">Product</label>
+                                    <select name="product" class="form-select form-select-sm" required>
+                                        <option value="">Select product</option>
+                                        {% for product in products %}
+                                        <option value="{{ product.id }}">{{ product.product_name }} | {{ product.category_name.category_name }} | {{ product.unit_price }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-medium">Quantity</label>
+                                    <input type="number" name="quantity" class="form-control form-control-sm" min="1" value="1" required>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-item" style="display: none;">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <button type="button" id="add-item" class="btn btn-link btn-sm">+ Add another product</button>
+                        </div>
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit" class="btn btn-primary btn-sm px-4">Save Sale</button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-danger btn-sm px-4">Cancel</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            {% endif %}
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="mb-3">
-                <label class="form-label">Product</label>
-
-                <select name="product" class="form-select" required>
-                    <option value="">Select product</option>
-
-                    {% for product in products %}
-                    <option value="{{ product.id }}">
-                        {{ product.product_name }} |
-                        {{ product.category_name.category_name }} |
-                        {{ product.unit_price }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Quantity</label>
-                <input type="number" name="quantity" class="form-control" min="1" required>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Distance</label>
-                <input type="number" name="distance" class="form-control" min="1" required>
-            </div>
-
-
-            <button type="submit" class="btn btn-primary">Save Sale</button>
-            <a href="{% url 'home' %}" class="btn btn-danger">Cancel</a>
-        </form>
+        </div>
     </div>
 </div>
 
+<script>
+const saleItemsContainer = document.getElementById('sale-items');
+const addItemButton = document.getElementById('add-item');
+
+function createSaleItemRow() {
+    const row = document.createElement('div');
+    row.className = 'row g-3 align-items-end sale-item-row';
+    row.innerHTML = `
+        <div class="col-md-7">
+            <label class="form-label small fw-medium">Product</label>
+            <select name="product" class="form-select form-select-sm" required>
+                <option value="">Select product</option>
+                {% for product in products %}
+                <option value="{{ product.id }}">{{ product.product_name }} | {{ product.category_name.category_name }} | {{ product.unit_price }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-medium">Quantity</label>
+            <input type="number" name="quantity" class="form-control form-control-sm" min="1" value="1" required>
+        </div>
+        <div class="col-md-2 text-end">
+            <button type="button" class="btn btn-outline-danger btn-sm remove-item">Remove</button>
+        </div>
+    `;
+    return row;
+}
+
+addItemButton.addEventListener('click', () => {
+    const newRow = createSaleItemRow();
+    saleItemsContainer.appendChild(newRow);
+});
+
+saleItemsContainer.addEventListener('click', (event) => {
+    if (event.target.classList.contains('remove-item')) {
+        const row = event.target.closest('.sale-item-row');
+        if (saleItemsContainer.querySelectorAll('.sale-item-row').length > 1) {
+            row.remove();
+        }
+    }
+});
+</script>
 {% endblock %}

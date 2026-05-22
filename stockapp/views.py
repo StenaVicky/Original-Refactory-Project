@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.db.models import Sum
-from saleapp.models import Product, Sales
+from saleapp.models import Product, SaleItem
 from .models import StockReceipt
 from django.http import HttpResponse
 from openpyxl import Workbook
@@ -21,16 +22,36 @@ def create_stock_receipt(request):
 
     if request.method == "POST":
         product = get_object_or_404(Product, id=request.POST.get("product"))
+        supplier_name = request.POST.get("supplier_name")
+        try:
+            quantity_received = int(request.POST.get("quantity_received", 0))
+            unit_cost = Decimal(request.POST.get("unit_cost"))
+            selling_price = Decimal(request.POST.get("selling_price") or 0)
+        except (TypeError, ValueError):
+            messages.error(request, "Please enter valid numeric values for quantity, cost, and selling price.")
+            return render(request, "create_stock_receipt.html", {"products": products})
+
+        if quantity_received <= 0:
+            messages.error(request, "Quantity received must be a positive number.")
+            return render(request, "create_stock_receipt.html", {"products": products})
+
+        if unit_cost <= 0:
+            messages.error(request, "Unit cost must be greater than zero.")
+            return render(request, "create_stock_receipt.html", {"products": products})
+
+        if selling_price <= 0:
+            messages.error(request, "Selling price must be greater than zero.")
+            return render(request, "create_stock_receipt.html", {"products": products})
 
         receipt = StockReceipt.objects.create(
             product=product,
-            supplier_name=request.POST.get("supplier_name"),
-            quantity_received=int(request.POST.get("quantity_received")),
-            unit_cost=Decimal(request.POST.get("unit_cost")),
-            selling_price=Decimal(request.POST.get("selling_price")or 0),
+            supplier_name=supplier_name,
+            quantity_received=quantity_received,
+            unit_cost=unit_cost,
+            selling_price=selling_price,
             supplier_paid=request.POST.get("supplier_paid") == "on"
         )
-
+        messages.success(request, "Stock receipt created successfully.")
         return redirect("goods_received_note", receipt_id=receipt.id)
 
     return render(request, "create_stock_receipt.html", {
@@ -52,14 +73,46 @@ def edit_stock_receipt(request, receipt_id):
 
     if request.method == "POST":
         product = get_object_or_404(Product, id=request.POST.get("product"))
+        try:
+            quantity_received = int(request.POST.get("quantity_received", 0))
+            unit_cost = Decimal(request.POST.get("unit_cost") or 0)
+            selling_price = Decimal(request.POST.get("selling_price") or 0)
+        except (TypeError, ValueError):
+            messages.error(request, "Please enter valid numeric values for quantity, cost, and selling price.")
+            return render(request, "edit_stock_receipt.html", {
+                "receipt": receipt,
+                "products": products
+            })
+
+        if quantity_received <= 0:
+            messages.error(request, "Quantity received must be a positive number.")
+            return render(request, "edit_stock_receipt.html", {
+                "receipt": receipt,
+                "products": products
+            })
+
+        if unit_cost <= 0:
+            messages.error(request, "Unit cost must be greater than zero.")
+            return render(request, "edit_stock_receipt.html", {
+                "receipt": receipt,
+                "products": products
+            })
+
+        if selling_price <= 0:
+            messages.error(request, "Selling price must be greater than zero.")
+            return render(request, "edit_stock_receipt.html", {
+                "receipt": receipt,
+                "products": products
+            })
 
         receipt.product = product
         receipt.supplier_name = request.POST.get("supplier_name")
-        receipt.quantity_received = int(request.POST.get("quantity_received"))
-        receipt.unit_cost = float(request.POST.get("unit_cost"))
+        receipt.quantity_received = quantity_received
+        receipt.unit_cost = unit_cost
+        receipt.selling_price = selling_price
         receipt.supplier_paid = request.POST.get("supplier_paid") == "on"
         receipt.save()
-
+        messages.success(request, "Stock receipt updated successfully.")
         return redirect("goods_received_note", receipt_id=receipt.id)
 
     return render(request, "edit_stock_receipt.html", {
@@ -73,6 +126,7 @@ def delete_stock_receipt(request, receipt_id):
 
     if request.method == "POST":
         receipt.delete()
+        messages.success(request, "Stock receipt deleted successfully.")
         return redirect("stock_receipt_list")
 
     return render(request, "delete_stock_receipt.html", {
@@ -89,8 +143,8 @@ def stock_report(request):
             product=product
         ).aggregate(total=Sum("quantity_received"))["total"] or 0
 
-        total_sold = Sales.objects.filter(
-            product_name=product
+        total_sold = SaleItem.objects.filter(
+            product=product
         ).aggregate(total=Sum("quantity"))["total"] or 0
 
         current_stock = total_received - total_sold
@@ -135,8 +189,8 @@ def export_stock_report_excel(request):
             product=product
         ).aggregate(total=Sum("quantity_received"))["total"] or 0
 
-        total_sold = Sales.objects.filter(
-            product_name=product
+        total_sold = SaleItem.objects.filter(
+            product=product
         ).aggregate(total=Sum("quantity"))["total"] or 0
 
         current_stock = total_received - total_sold

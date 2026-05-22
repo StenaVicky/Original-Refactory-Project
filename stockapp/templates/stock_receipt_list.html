@@ -8,7 +8,7 @@
 
 </div>
 <div class="d-flex justify-content-end gap-2 mb-2">
-<a href="{% url 'create_stock_receipt'%}" class="btn btn-secondary">Record Stock Received</a>
+<a href="{% url 'create_stock_receipt'%}" class="btn btn-success">Record Stock Received</a>
 <a href="{% url 'stock_report'%}" class=" btn btn-primary">Stock Report</a>
 </div>
 
@@ -47,8 +47,8 @@
             <td>{{ receipt.date_received|date:"j F Y," }}</td>
             <td>
             <a href="{% url 'goods_received_note' receipt.id %}" class="btn btn-dark btn-sm">GRN</a>
-            <a href="{% url 'edit_stock_receipt' receipt.id %}" class="btn btn-primary btn-sm">Edit</a>
-            <a href="{% url 'delete_stock_receipt' receipt.id %}" class="btn btn-danger btn-sm">Delete</a>
+            <a href="{% url 'edit_stock_receipt' receipt.id %}" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'delete_stock_receipt' receipt.id %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
 </td>
         </tr>
         {% empty %}

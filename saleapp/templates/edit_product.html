@@ -1,50 +1,51 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-sm border-0" style="font-size: 0.95rem;">
+                <div class="card-header text-white py-3" style="background-color: #1a5f7a;">
+                    <h4 class="mb-1 fw-semibold text-center">Edit Product</h4>
+                    <p class="mb-0 small text-white-75 text-center">Update product details with the latest category and description.</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        {% csrf_token %}
 
-<div class="card shadow-sm">
-    <div class="card-header bg-info text-black">
-        <h3 class="mb-0">Edit Product</h3>
-    </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-medium">Category</label>
+                            <select name="category" class="form-select form-select-sm" required>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if product.category_name.id == category.id %}selected{% endif %}>{{ category.category_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-    <div class="card-body">
-        <form method="POST">
-            {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label small fw-medium">Product Name</label>
+                            <input type="text" name="product_name" value="{{ product.product_name }}" class="form-control form-control-sm" required>
+                        </div>
 
-            <div class="mb-6">
-                <label class="form-label">Category</label>
+                        <div class="mb-3">
+                            <label class="form-label small fw-medium">Current Unit Price</label>
+                            <input type="text" value="{{ product.unit_price }}" class="form-control form-control-sm" readonly>
+                            <div class="form-text small text-muted">Unit price is controlled by stock receipts.</div>
+                        </div>
 
-                <select name="category" class="form-select" required>
-                    {% for category in categories %}
-                    <option value="{{ category.id }}" {% if product.category_name.id == category.id %}selected{% endif %}>
-                        {{ category.category_name }}
-                    </option>
-                    {% endfor %}
-                </select>
+                        <div class="mb-3">
+                            <label class="form-label small fw-medium">Description</label>
+                            <textarea name="description" class="form-control form-control-sm" rows="4" required>{{ product.description }}</textarea>
+                        </div>
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit" class="btn btn-info btn-sm px-4">Update Product</button>
+                            <a href="{% url 'product_list' %}" class="btn btn-outline-danger btn-sm px-4">Cancel</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Product Name</label>
-                <input type="text" name="product_name" value="{{ product.product_name }}" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Current Unit Price</label>
-                <input type="text" value="{{ product.unit_price }}" class="form-control" readonly>
-                <small class="text-muted">
-                    Unit price is controlled by stock receipts.
-                </small>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Description</label>
-                <textarea name="description" class="form-control" rows="4" required>{{ product.description }}</textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Update Product</button>
-            <a href="{% url 'product_list' %}" class="btn btn-danger">Cancel</a>
-        </form>
+        </div>
     </div>
 </div>
-
 {% endblock %}

@@ -1,54 +1,81 @@
- {% extends "base.html" %}
- {% block content %}
+{% extends "base.html" %}
+{% block content %}
 
- <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
+<div class="container py-4" style="max-width: 820px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1">Edit Stock Receipt</h4>
+                <small class="text-white-75">Update receipt details and adjust product pricing.</small>
+            </div>
+            <span class="badge bg-light text-primary">Receipt #{{ receipt.id }}</span>
+        </div>
+
+        <div class="card-body">
+            <div class="mb-4 rounded-3 p-3 bg-light border">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <div class="text-muted small">Received</div>
+                        <div class="fw-semibold">{{ receipt.date_received|date:'M d, Y H:i' }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-muted small">Total Amount</div>
+                        <div class="fw-semibold">{{ receipt.total_amount }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" class="row g-3">
+                {% csrf_token %}
+
+                <div class="col-12">
+                    <label class="form-label">Product</label>
+                    <select name="product" class="form-select" required>
+                        <option value="">Select product</option>
+                        {% for product in products %}
+                            <option value="{{ product.id }}" {% if receipt.product.id == product.id %}selected{% endif %}>
+                                {{ product.product_name }} | Current Price: {{ product.unit_price }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Supplier Name</label>
+                    <input type="text" name="supplier_name" value="{{ receipt.supplier_name }}" class="form-control" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Quantity Received</label>
+                    <input type="number" name="quantity_received" min="1" value="{{ receipt.quantity_received }}" class="form-control" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Unit Cost</label>
+                    <input type="number" name="unit_cost" step="0.01" min="0.01" value="{{ receipt.unit_cost }}" class="form-control" required>
+                    <div class="form-text">Updates the product's current cost price.</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Selling Price</label>
+                    <input type="number" name="selling_price" step="0.01" min="0.01" value="{{ receipt.selling_price }}" class="form-control" required>
+                    <div class="form-text">Updates the product's current selling price.</div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-check form-switch">
+                        <input type="checkbox" name="supplier_paid" class="form-check-input" id="supplier_paid" {% if receipt.supplier_paid %}checked{% endif %}>
+                        <label class="form-check-label" for="supplier_paid">Supplier has been paid</label>
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex flex-wrap gap-2 justify-content-end mt-3">
+                    <a href="{% url 'stock_receipt_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Receipt</button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
-    <div class="card-body">
-        <form method= "POST">
-        {% csrf_token %}
-
-        <div  class="mb-3">
-        <label class="form-label">Product</label>
-        <select name="product" class="form-select"required>
-            {% for product in products %}
-            <option value="{{product.id}}"{%if receipt.product.id == product.id %}selected{% endif %}>
-            {{product.product_name }}
-        </option>
-        {% endfor %}
-    </select>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Supplier Name</label>
-        <input type="text" name="supplier_name" value="{{receipt.supplier_name}}" class="form-control" required>
- </div>
-
- <div class="mb-3">
-    <label class="form_label">selling_price</label>
-    <input type="number" name="unit_cost" step="0.01" value="{{receipts.selling_price}}" class="form-control" required>
-    <small class="text-muted">
-        Updating this will update the product's current selling price.
-    </small>
-    <div class="mb-3">
-        <label  class="form-label">Unit Cost</label>
-        <input type="number" name="unit_cost" step="0.01" value="{{receipt.unit_cost}}" class="form-control" required>
-        <small class="text-muted">
-            Updating this will update the product's current cost price
-        </small>
-
-    </div>
-    <div class="form-check mb-3">
-        <input type="checkbox" name="supplier_paid" class="form-check-input" id="supplier_paid"
-        {% if receipt.supplier_paid %}checked{% endif %}>
-        <label class="form-check-label" for="supplier_paid">
-            Supplier has been paid
-        </label>
-
-    </div>
-    <button type="submit" class="btn btn-primary">Update Receipt</button>
-    <a href="{% url 'stock_receipt_list' %}" class="btn btn-secondary"> Cancel</a>
-</form>
- </div>
- </div>
- {% endblock %}
+{% endblock %}

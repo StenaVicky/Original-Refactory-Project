@@ -1,98 +1,85 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<div class="card shadow-sm">
-
-    <div class="card-header bg-success text-white">
-        <h3 class="mb-0">Register Scheme Customer</h3><i class="bi bi-credit-card"></i>
-        
-    </div>
-
-    <div class="card-body">
-    {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mt-5">
+            <div class="card-header" style="background-color: #1a5f7a; color: white;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h3 class="mb-1">Register Scheme Customer</h3>
+                        <p class="mb-0 text-white-75">Add a new customer to the credit scheme.</p>
                     </div>
-                {% endfor %}
-            {% endif %}
-
-        <form method="POST">
-
-            {% csrf_token %}
-            
-
-            <div class="mb-3">
-                <label class="form-label">Full Name</label>
-
-                <input type="text"
-                       name="full_name"
-                       class="form-control"
-                       required>
+                    <i class="bi bi-credit-card fs-2"></i>
+                </div>
             </div>
+            <div class="card-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
 
-            <div class="mb-3">
-                <label class="form-label">NIN Number</label>
+                <form method="POST" class="row g-3">
+                    {% csrf_token %}
 
-                <input type="text" name="nin_number" class="form-control" required minlength="14" maxlength="14" pattern="[A-Z0-9]{14}" title="Enter a valid 14-character NIN">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Full Name</label>
+                        <input type="text" name="full_name" class="form-control" placeholder="" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">NIN Number</label>
+                        <input type="text" name="nin_number" class="form-control" required minlength="14" maxlength="14" pattern="[A-Z0-9]{14}" title="Enter a valid 14-character NIN" placeholder="">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Phone Number</label>
+                        <input type="text" name="phone_number" class="form-control" required pattern="^(?:\+256|256|0)(7[0-9]{8}|2[0-9]{8})$" title="Enter a valid Ugandan phone number" placeholder="">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Occupation</label>
+                        <input type="text" name="occupation" class="form-control" placeholder="">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Address</label>
+                        <textarea name="address" rows="3" class="form-control" placeholder="" required></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Employer Name</label>
+                        <input type="text" name="employer_name" class="form-control" placeholder="">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="payment_plan" class="form-label fw-semibold">Payment Plan</label>
+                        <select name="payment_plan" id="payment_plan" class="form-select" required>
+                            <option value="">Select payment plan</option>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Weekly">Weekly</option>
+                            <option value="Quarterly">Quarterly</option>
+                            <option value="Lump Sum">Lump Sum</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 d-flex flex-column flex-sm-row gap-2 mt-2">
+                        <button type="submit" class="btn" style="background-color: #1a5f7a; color: white;">Register Customer</button>
+                        <a href="{% url 'scheme_customer_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Phone Number</label>
-
-                <input type="text" name="phone_number" class="form-control" required pattern="^(?:\+256|256|0)(7[0-9]{8}|2[0-9]{8})$" title="Enter a valid Ugandan phone number">
+            <div class="card-footer" style="background-color: #e86a2c; color: white;">
+                <div class="d-flex justify-content-between align-items-center flex-column flex-sm-row gap-2 mb-0">
+                    <span><strong>Tip:</strong> Ensure the NIN number is exactly 14 alphanumeric characters.</span>
+                    <small>Scheme customer registration</small>
+                </div>
             </div>
-
-            <div class="mb-6">
-                <label class="form-label">Address</label>
-
-                <textarea name="address"
-                          rows="3"
-                          class="form-control"
-                          required></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Occupation</label>
-
-                <input type="text"
-                       name="occupation"
-                       class="form-control">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Employer Name</label>
-
-                <input type="text"
-                       name="employer_name"
-                       class="form-control">
-            </div>
-            <div class="mb-3">
-    <label for="payment_plan" class="form-label">Payment Plan *</label>
-    <select name="payment_plan" id="payment_plan" class="form-select" required>
-        <option value="">Select Payment Plan</option>
-        <option value="Monthly">Monthly</option>
-        <option value="Weekly">Weekly</option>
-        <option value="Quarterly">Quarterly</option>
-        <option value="Lump Sum">Lump Sum</option>
-    </select>
-</div>
-
-            <button type="submit"
-                    class="btn btn-success">
-                Register Customer
-            </button>
-
-            <a href="{% url 'scheme_customer_list' %}"
-               class="btn btn-secondary">
-                Cancel
-            </a>
-
-        </form>
-
+        </div>
     </div>
 </div>
-
 {% endblock %}

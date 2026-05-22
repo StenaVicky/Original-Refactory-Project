@@ -2,57 +2,68 @@
 {% load humanize %}
 
 {% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow-sm border-0" style="font-size: 0.9rem;">
+                <div class="card-header text-white py-3" style="background-color: #1a5f7a;">
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+                        <div>
+                            <h4 class="mb-1 fw-semibold">Sales Records</h4>
+                            <p class="mb-0 small text-white-75">Sales recorded at NYONDO Hardware</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'create_sale' %}" class="btn btn-success btn-sm px-3">Register Sale</a>
+                            <a href="{% url 'sales_report' %}" class="btn btn-success btn-sm px-3">Sales Report</a>
+                        </div>
+                    </div>
+                </div>
 
-<div class="card mb-4" style="background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4f 100%); color: white;">
-    <div class="card-body">
-        <h3 class="mb-0">Sale Record</h3>
-        <i class="bi bi-cart"></i>
-        <small>Sales recorded at NYONDO Hardware</small>
+                <div class="card-body p-3">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm mb-0 shadow-sm">
+                            <thead class="table-dark small">
+                                <tr>
+                                    <th>Invoice</th>
+                                    <th>Customer</th>
+                                    <th>Products</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Sale Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="small">
+                                {% for sale in sales %}
+                                <tr>
+                                    <td>INV-{{ sale.id }}</td>
+                                    <td>{{ sale.customer_name|default:"Walk-in" }}</td>
+                                    <td>{{ sale.item_summary }}</td>
+                                    <td>{{ sale.quantity }}</td>
+                                    <td>{{ sale.total_amount|floatformat:2 }}</td>
+                                    <td>{{ sale.sale_date|date:"j F Y, H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'invoice' sale.id %}" class="btn btn-dark btn-sm">Invoice</a>
+                                        <a href="{% url 'edit_sale' sale.id %}" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i></a>
+                                        <a href="{% url 'delete_sale' sale.id %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center small">No sales recorded yet.</td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="table-dark small">
+                                    <td colspan="4" class="text-center align-middle"><strong>Total Sales</strong></td>
+                                    <td><strong>{{ total_sales_value|floatformat:2 }}</strong></td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="d-flex justify-content-end gap-2 mb-3">
-        <a href="{% url 'create_sale' %}" class="btn btn-success">Register Sale</a>
-        <a href="{% url 'sales_report' %}" class="btn btn-success">Sales Report</a>
-    </div>
-
-    <table class="table table-bordered table-striped shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>Product</th>
-                <th>Category</th>
-                <th>Unit Price</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th>Sale Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for sale in sales %}
-            <tr>
-                <td>{{ sale.product_name.product_name }}</td>
-                <td>{{ sale.product_name.category_name.category_name }}</td>
-                <td>{{ sale.product_name.unit_price|floatformat:2|intcomma }}</td>
-                <td>{{ sale.quantity }}</td>
-                <td>{{ sale.total_amount|floatformat:2|intcomma }}</td>
-                <td>{{ sale.sale_date|date:"j F Y, H:i" }}</td>
-                <td>
-                    <a href="{% url 'invoice' sale.id %}" class="btn btn-dark btn-sm">Invoice</a>
-                    <a href="{% url 'edit_sale' sale.id %}" class="btn btn-primary btn-sm">Edit</a>
-                    <a href="{% url 'delete_sale' sale.id %}" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7" class="text-center">No sales recorded yet.</td>
-            </tr>
-            {% endfor %}
-            <tr class="table-dark">
-                <td colspan="4" class="text-center align-middle"> <strong>Total Sales</strong> </td>
-                <td><strong>{{ total_sales_value|floatformat:2|intcomma }}</strong> </td>
-                <td colspan="2"></td>
-            </tr>
-        </tbody>
-    </table>
-
-    {% endblock %}
+</div>
+{% endblock %}

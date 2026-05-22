@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import SchemeCustomer, SchemePayment, SchemeGoodsPickup
-from saleapp.models import Product, Sales
+from saleapp.models import Product, Sales, SaleItem
 from django.db.models import Sum
 from stockapp.models import StockReceipt
 from django.utils import timezone
@@ -30,6 +30,7 @@ def register_scheme_customer(request):
         if SchemeCustomer.objects.filter(nin_number=nin_number).exists():
             messages.error(request, "A customer with this NIN number already exists.")
             return render(request, 'register_scheme_customer.html')
+        
         SchemeCustomer.objects.create(
             full_name=request.POST.get('full_name'),
             nin_number=request.POST.get('nin_number'),
@@ -40,23 +41,32 @@ def register_scheme_customer(request):
             payment_plan=request.POST.get('payment_plan'),
             date_registered=timezone.now(),
         )
-        # messages.success(request, "Customer registered successfully.")
-        
+        messages.success(request, "Customer registered successfully.")
         return redirect('scheme_customer_list')
     return render(request, 'register_scheme_customer.html')
 
 
 def record_scheme_payment(request, customer_id):
-    customer =get_object_or_404(SchemeCustomer, id=customer_id)
-    if request.method =='POST':
-      payment=  SchemePayment.objects.create(
+    customer = get_object_or_404(SchemeCustomer, id=customer_id)
+    if request.method == 'POST':
+        try:
+            amount_paid = float(request.POST.get('amount_paid', 0))
+        except (TypeError, ValueError):
+            messages.error(request, "Please enter a valid payment amount.")
+            return render(request, "record_scheme_payment.html", {"customer": customer})
+
+        if amount_paid <= 0:
+            messages.error(request, "Payment amount must be greater than zero.")
+            return render(request, "record_scheme_payment.html", {"customer": customer})
+
+        payment = SchemePayment.objects.create(
             customer=customer,
-            amount_paid=request.POST.get('amount_paid'),
+            amount_paid=amount_paid,
             notes=request.POST.get("notes")
-            
         )
-      return redirect("temporary_receipt",payment_id=payment.id)
-    return render(request, "record_scheme_payment.html",{"customer":customer})
+        messages.success(request, "Payment recorded successfully.")
+        return redirect("temporary_receipt", payment_id=payment.id)
+    return render(request, "record_scheme_payment.html", {"customer": customer})
 
 def temporary_receipt(request, payment_id):
     payment = get_object_or_404(SchemePayment,id=payment_id)
@@ -90,19 +100,34 @@ def scheme_goods_pickup(request, customer_id):
             "Iron bars",
         ]
     )
-    # products = Product.objects.all()
-    if  request.method == "POST":
+    
+    if request.method == "POST":
         product = get_object_or_404(Product, id=request.POST.get('product'))
-        quantity = int(request.POST.get("quantity"))
+        try:
+            quantity = int(request.POST.get("quantity", 0))
+        except (TypeError, ValueError):
+            messages.error(request, "Please enter a valid pickup quantity.")
+            return render(request, "scheme_goods_pickup.html", {
+                "customer": customer,
+                "products": products
+            })
+
+        if quantity <= 0:
+            messages.error(request, "Quantity must be greater than zero.")
+            return render(request, "scheme_goods_pickup.html", {
+                "customer": customer,
+                "products": products
+            })
+
         total_received = StockReceipt.objects.filter(product=product).aggregate(total=Sum('quantity_received'))['total'] or 0
-        total_sold = Sales.objects.filter( product_name=product ).aggregate(total=Sum("quantity"))["total"] or 0
+        total_sold = SaleItem.objects.filter(product=product).aggregate(total=Sum("quantity"))["total"] or 0
         available_stock = total_received - total_sold
 
         if quantity > available_stock:
+            messages.error(request, f"Not enough stock. Available stock is {available_stock}.")
             return render(request, "scheme_goods_pickup.html", {
                 "customer": customer,
-                "products": products,
-                "error": f"Not enough stock. Available stock is {available_stock}."
+                "products": products
             })
 
         total_price = product.unit_price * quantity
@@ -110,8 +135,15 @@ def scheme_goods_pickup(request, customer_id):
         sale = Sales.objects.create(
             product_name=product,
             quantity=quantity,
-            total_price=total_price,
-            
+            total_amount=total_price,
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=product,
+            quantity=quantity,
+            unit_price=product.unit_price,
+            line_total=total_price
         )
 
         SchemeGoodsPickup.objects.create(
@@ -120,6 +152,7 @@ def scheme_goods_pickup(request, customer_id):
             quantity_taken=quantity,
             linked_sale=sale
         )
+        messages.success(request, "Goods pickup recorded successfully.")
         return redirect("invoice", sale_id=sale.id)
     return render(request, "scheme_goods_pickup.html",{
                  
@@ -139,7 +172,7 @@ def customer_report(request):
         total_deposited = sum(p.amount_paid for p in payments)
         
         pickups = SchemeGoodsPickup.objects.filter(customer=customer)
-        total_withdrawn_amount = sum(p.quantity_taken * p.product.selling_price for p in pickups)
+        total_withdrawn_amount = sum(p.quantity_taken * p.product.unit_price for p in pickups)
         
         balance = total_deposited - total_withdrawn_amount
         

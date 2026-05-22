@@ -1,90 +1,109 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-
 {% block content %}
 
-<div class="card shadow-sm mx-auto"
-     style="max-width: 700px;">
-
-    <div class="card-header bg-dark text-white text-center">
-        <h3 class="mb-0">Temporary Receipt</h3>
+<div class="card shadow-sm mx-auto my-5" style="max-width: 780px;">
+    <div class="card-header bg-primary text-white">
+        <div class="d-flex align-items-center justify-content-between flex-column flex-md-row gap-3">
+            <div>
+                <h2 class="mb-1">NYONDO Hardware</h2>
+                <p class="mb-0 text-white-75">Temporary Payment Receipt</p>
+            </div>
+            <div class="text-md-end">
+                <span class="badge bg-light text-dark py-2 px-3 fs-6">Temporary</span>
+                <p class="mb-0 text-white-75 mt-2">Nansana - Kampala</p>
+            </div>
+        </div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body p-4">
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <h5 class="text-uppercase text-secondary mb-3">Customer Information</h5>
+                <div class="row">
+                    <div class="col-12 mb-2">
+                        <span class="text-muted">Name</span>
+                        <p class="fw-semibold mb-0">{{ payment.customer.full_name }}</p>
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <span class="text-muted">NIN Number</span>
+                        <p class="mb-0">{{ payment.customer.nin_number }}</p>
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <span class="text-muted">Phone</span>
+                        <p class="mb-0">{{ payment.customer.phone_number }}</p>
+                    </div>
+                </div>
+            </div>
 
-        <h4 class="text-center">
-            Hardware Salary Scheme
-        </h4>
+            <div class="col-md-5">
+                <h5 class="text-uppercase text-secondary mb-3">Receipt Details</h5>
+                <div class="bg-light rounded-3 p-3">
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Receipt #</small>
+                        <strong>TMP-{{ payment.id }}</strong>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Date</small>
+                        <strong>{{ payment.payment_date|date:"j F Y" }}</strong>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">Amount Paid</small>
+                        <strong class="text-success fs-5">UGX {{ payment.amount_paid|floatformat:2|intcomma }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <p class="text-center text-muted">
-            Temporary Payment Receipt
-        </p>
+        <div class="mb-4 p-3 rounded-3" style="background-color: #f4f8fb;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Payment Summary</h6>
+                <span class="badge bg-secondary text-white">Temporary Receipt</span>
+            </div>
+            <p class="mb-0 text-muted">{{ payment.notes|default:"No additional notes available." }}</p>
+        </div>
 
-        <hr>
+        <div class="table-responsive">
+            <table class="table table-borderless mb-0">
+                <tbody>
+                    <tr class="border-top">
+                        <th class="py-3 text-muted">Customer Name</th>
+                        <td class="py-3">{{ payment.customer.full_name }}</td>
+                    </tr>
+                    <tr class="border-top">
+                        <th class="py-3 text-muted">NIN Number</th>
+                        <td class="py-3">{{ payment.customer.nin_number }}</td>
+                    </tr>
+                    <tr class="border-top">
+                        <th class="py-3 text-muted">Phone Number</th>
+                        <td class="py-3">{{ payment.customer.phone_number }}</td>
+                    </tr>
+                    <tr class="border-top">
+                        <th class="py-3 text-muted">Amount Paid</th>
+                        <td class="py-3 fw-semibold text-success">UGX {{ payment.amount_paid|floatformat:2|intcomma }}</td>
+                    </tr>
+                    <tr class="border-top border-bottom">
+                        <th class="py-3 text-muted">Notes</th>
+                        <td class="py-3">{{ payment.notes|default:"No notes provided." }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <p>
-            <strong>Receipt Number:</strong>
-            TMP-{{ payment.id }}
-        </p>
-
-        <p>
-            <strong>Date:</strong>
-            {{ payment.payment_date|date:"j F Y, H:i" }}
-        </p>
-
-        <hr>
-
-        <table class="table table-bordered">
-
-            <tr>
-                <th>Customer Name</th>
-                <td>{{ payment.customer.full_name }}</td>
-            </tr>
-
-            <tr>
-                <th>NIN Number</th>
-                <td>{{ payment.customer.nin_number }}</td>
-            </tr>
-
-            <tr>
-                <th>Phone Number</th>
-                <td>{{ payment.customer.phone_number }}</td>
-            </tr>
-
-            <tr>
-                <th>Amount Paid</th>
-
-                <td>
-                    {{ payment.amount_paid|floatformat:2|intcomma }}
-                </td>
-            </tr>
-
-            <tr>
-                <th>Notes</th>
-                <td>{{ payment.notes }}</td>
-            </tr>
-
-        </table>
-
-        <p class="text-center mt-4">
-            Thank you for your payment.
-        </p>
-
+        <div class="text-center mt-4">
+            <p class="mb-1">Thank you for your payment and for choosing NYONDO Hardware.</p>
+            <p class="small text-muted mb-0">Please keep this temporary receipt for your records.</p>
+        </div>
     </div>
 
-    <div class="card-footer text-center">
-        <button onclick="window.print()"
-                class="btn btn-primary">
-            Print Receipt
-        </button>
-
-        <a href="{% url 'scheme_customer_list' %}"
-           class="btn btn-secondary">
-            Back
-        </a>
+    <div class="card-footer d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+        <small class="text-muted">This receipt is temporary and not a final invoice.</small>
+        <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-primary btn-sm no-print">Print Receipt</button>
+            <a href="{% url 'scheme_customer_list' %}" class="btn btn-secondary btn-sm no-print">Back</a>
+        </div>
     </div>
-
 </div>
 
 {% endblock %}
