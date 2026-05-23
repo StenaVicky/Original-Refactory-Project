@@ -1,14 +1,39 @@
 {% extends 'base.html' %}
 
+{% block title %}Products - NYONDO Hardware{% endblock %}
+
 {% block content %}
 
 <div class="card mb-4" style="background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4f 100%); color: white;">
-        <div class="card-body">
-            <h3 class="mb-0">📦 Product</h3>
-            <small>Product supplied to NYONDO Hardware</small>
-            <a href="{% url 'create_product' %}" class="btn btn-success btn-sm"><span>Add Product</span></a>
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="mb-0">📦 Products</h3>
+                <small>Products supplied to NYONDO Hardware</small>
+            </div>
+            <a href="{% url 'create_product' %}" class="btn btn-success btn-sm">+ Add Product</a>
         </div>
+    </div>
+</div>
 
+<!-- Search Form -->
+<form method="GET" class="d-flex mb-3">
+    <input type="text" name="search" class="form-control me-2" 
+           placeholder="Search products by name or category..." value="{{ search_query }}">
+    <button type="submit" class="btn" style="background-color: #e86a2c; color: white;">
+        <i class="bi bi-search"></i> Search
+    </button>
+    {% if search_query %}
+        <a href="?" class="btn btn-secondary ms-2">Clear</a>
+    {% endif %}
+</form>
+
+<!-- Search Info -->
+{% if search_query %}
+    <p class="text-muted mb-2">Showing results for: <strong>"{{ search_query }}"</strong></p>
+{% endif %}
+
+<!-- Products Table -->
 <table class="table table-bordered table-striped shadow-sm">
     <thead class="table-dark">
         <tr>
@@ -20,26 +45,29 @@
             <th>Actions</th>
         </tr>
     </thead>
-
     <tbody>
         {% for product in products %}
         <tr>
             <td>{{ product.product_name }}</td>
             <td>{{ product.category_name.category_name }}</td>
-            <td>{{product.cost_price}}</td>
+            <td>{{ product.cost_price }}</td>
             <td>{{ product.unit_price }}</td>
-            <td>{{ product.description }}</td>
+            <td>{{ product.description|truncatechars:50 }}</td>
             <td>
-                <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i></a>
-                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                
-
+                <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash"></i>
+                </a>
             </td>
-        </tr>
+            </tr>
         {% empty %}
         <tr>
-            <td colspan="5" class="text-center">No products found.</td>
-        </tr>
+            <td colspan="6" class="text-center text-danger">
+                <i class="bi bi-search"></i> No products found matching "{{ search_query }}"
+            </td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>

@@ -12,8 +12,16 @@
                             <p class="mb-0 small text-white-75">Scheme customers registered at NYONDO Hardware</p>
                         </div>
                         <a href="{% url 'register_scheme_customer' %}" class="btn btn-success btn-sm px-3">Register Customer</a>
+
                     </div>
                 </div>
+                  <form method="GET" action="" class="d-flex mb-3">
+    <input type="text" name="search" class="form-control me-2" 
+           placeholder="Search..." value="{{ search_query }}">
+    <button type="submit" class="btn" style="background-color: #e86a2c; color: white;">
+        <i class="bi bi-search"></i> Search
+    </button>
+</form>
                 <div class="card-body p-3">
                     <div class="table-responsive">
     <table class="table table-bordered table-striped table-sm mb-0 shadow-sm">

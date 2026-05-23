@@ -8,6 +8,7 @@ from openpyxl import Workbook
 from datetime import timedelta
 from django.utils import timezone
 from schemeapp.models import SchemeCustomer, SchemePayment
+from django.db.models import Q
 
 
 def home(request):
@@ -78,6 +79,20 @@ def create_product(request):
         return redirect('product_list')
     
     return render(request, "create_product.html", {'categories': categories})
+
+
+def create_search(request):
+    products = Product.objects.all()
+    search_query = request.GET.get('search', '')
+    
+    if search_query:
+        products = products.filter(name__icontains=search_query)
+    
+    return render(request, 'products.html', {
+        'products': products,
+        'search_query': search_query,
+    })
+  
 
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)

@@ -13,9 +13,17 @@
             </div>
         </div>
     </div>
+    
 
     <a href="{% url 'create_category' %}" class="btn btn-success btn-lg align-self-center">Add Category</a>
 </div>
+  <form method="GET" action="" class="d-flex mb-3">
+    <input type="text" name="search" class="form-control me-2" 
+           placeholder="Search..." value="{{ search_query }}">
+    <button type="submit" class="btn" style="background-color: #e86a2c; color: white;">
+        <i class="bi bi-search"></i> Search
+    </button>
+</form>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
