@@ -71,10 +71,12 @@
             {% empty %}
             <tr>
                 <td colspan="6" class="text-center">No customers found</td>
+                
              </tr>
             {% endfor %}
         </tbody>
      </table>
+      <button onclick="window.print()" class="btn btn-primary">Print</button>
 
 </div>
 {% endblock %}

@@ -151,7 +151,7 @@ def stock_report(request):
 
         if current_stock <= 10:
             status = "Low Stock"
-        elif current_stock <= 30:
+        elif current_stock <= 20:
             status = "Medium Stock"
         else:
             status = "High Stock"

@@ -37,6 +37,7 @@
                                     <th>Unit Price</th>
                                     <th>Quantity</th>
                                     <th>Line Total</th>
+                                    <th>Distance</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -46,6 +47,7 @@
                                     <td>UGX {{ item.unit_price|floatformat:0 }}</td>
                                     <td>{{ item.quantity }}</td>
                                     <td>UGX {{ item.line_total|floatformat:0 }}</td>
+                                    <td></td>
                                 </tr>
                                 {% empty %}
                                 <tr>
@@ -62,7 +64,7 @@
                             <p class="small text-muted mb-0">Thank you for your purchase. Please keep this invoice for your records.</p>
                         </div>
                         <div class="col-6">
-                            <div class="border rounded-3 p-3 bg-light text-end">
+                            <div class="border rounded-3 p-3 b text-end" style="background-color: #1a5f7a;">
                                 <p class="small text-uppercase text-muted mb-1">Total Amount</p>
                                 <h4 class="mb-0">UGX {{ sale.total_amount|floatformat:0 }}</h4>
                             </div>
