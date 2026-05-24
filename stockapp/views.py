@@ -6,17 +6,18 @@ from .models import StockReceipt
 from django.http import HttpResponse
 from openpyxl import Workbook
 from decimal import Decimal
+from django.contrib.auth.decorators import login_required
 
 
 
-
+@login_required
 def stock_receipt_list(request):
     receipts = StockReceipt.objects.all().order_by("-date_received")
     return render(request, "stock_receipt_list.html", {
         "receipts": receipts
     })
 
-
+@login_required
 def create_stock_receipt(request):
     products = Product.objects.all()
 
@@ -58,7 +59,7 @@ def create_stock_receipt(request):
         "products": products
     })
 
-
+@login_required
 def goods_received_note(request, receipt_id):
     receipt = get_object_or_404(StockReceipt, id=receipt_id)
 
@@ -66,7 +67,7 @@ def goods_received_note(request, receipt_id):
         "receipt": receipt
     })
 
-
+@login_required
 def edit_stock_receipt(request, receipt_id):
     receipt = get_object_or_404(StockReceipt, id=receipt_id)
     products = Product.objects.all()
@@ -120,7 +121,8 @@ def edit_stock_receipt(request, receipt_id):
         "products": products
     })
 
-
+@login_required
+# @admin_required
 def delete_stock_receipt(request, receipt_id):
     receipt = get_object_or_404(StockReceipt, id=receipt_id)
 
@@ -133,7 +135,7 @@ def delete_stock_receipt(request, receipt_id):
         "receipt": receipt
     })
 
-
+@login_required
 def stock_report(request):
     products = Product.objects.all()
     report = []
@@ -168,6 +170,7 @@ def stock_report(request):
         "report": report
     })
 
+@login_required
 def export_stock_report_excel(request):
     products = Product.objects.all()
 
@@ -221,6 +224,7 @@ def export_stock_report_excel(request):
 
     return response
 
+@login_required
 def supplier_report(request):
     
     suppliers = StockReceipt.objects.values('supplier_name').distinct()

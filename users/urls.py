@@ -1,12 +1,12 @@
-from . import views
 from django.urls import path
+from . import views
+from django.shortcuts import redirect
 from django.contrib.auth import views as auth_views
+from .views import CustomLoginView
 
-
-urlpatterns =[
-    # path('logout/', views.logout, name='logout'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='/login/'), name='logout'),
-    # path('signup/', views.sign_page, name='sign_up'),
-    # path('login/', views.login_view, name='login'),
-    # path("", views.login_view, name="login_view"),
+urlpatterns = [
+    path('', lambda request: redirect('login')),
+    path('register/', views.register, name='register'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
 ]

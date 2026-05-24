@@ -18,7 +18,7 @@
                     {% for message in messages %}
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     {% endfor %}
                 {% endif %}
@@ -27,44 +27,53 @@
                     {% csrf_token %}
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Full Name</label>
-                        <input type="text" name="full_name" class="form-control" placeholder="" required>
+                        <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                        {{ form.full_name }}
+                        {% if form.full_name.errors %}
+                            <div class="text-danger small">{{ form.full_name.errors }}</div>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">NIN Number</label>
-                        <input type="text" name="nin_number" class="form-control" required minlength="14" maxlength="14" pattern="[A-Z0-9]{14}" title="Enter a valid 14-character NIN" placeholder="">
+                        <label class="form-label fw-semibold">NIN Number <span class="text-danger">*</span></label>
+                        {{ form.nin_number }}
+                        {% if form.nin_number.errors %}
+                            <div class="text-danger small">{{ form.nin_number.errors }}</div>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Phone Number</label>
-                        <input type="text" name="phone_number" class="form-control" required pattern="^(?:\+256|256|0)(7[0-9]{8}|2[0-9]{8})$" title="Enter a valid Ugandan phone number" placeholder="">
+                        <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="text-danger small">{{ form.phone_number.errors }}</div>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Occupation</label>
-                        <input type="text" name="occupation" class="form-control" placeholder="">
+                        {{ form.occupation }}
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label fw-semibold">Address</label>
-                        <textarea name="address" rows="3" class="form-control" placeholder="" required></textarea>
+                        <label class="form-label fw-semibold">Address <span class="text-danger">*</span></label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <div class="text-danger small">{{ form.address.errors }}</div>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Employer Name</label>
-                        <input type="text" name="employer_name" class="form-control" placeholder="">
+                        {{ form.employer_name }}
                     </div>
 
                     <div class="col-md-6">
-                        <label for="payment_plan" class="form-label fw-semibold">Payment Plan</label>
-                        <select name="payment_plan" id="payment_plan" class="form-select" required>
-                            <option value="">Select payment plan</option>
-                            <option value="Monthly">Monthly</option>
-                            <option value="Weekly">Weekly</option>
-                            <option value="Quarterly">Quarterly</option>
-                            <option value="Lump Sum">Lump Sum</option>
-                        </select>
+                        <label class="form-label fw-semibold">Payment Plan <span class="text-danger">*</span></label>
+                        {{ form.payment_plan }}
+                        {% if form.payment_plan.errors %}
+                            <div class="text-danger small">{{ form.payment_plan.errors }}</div>
+                        {% endif %}
                     </div>
 
                     <div class="col-12 d-flex flex-column flex-sm-row gap-2 mt-2">

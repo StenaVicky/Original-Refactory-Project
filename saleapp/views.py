@@ -8,9 +8,12 @@ from openpyxl import Workbook
 from datetime import timedelta
 from django.utils import timezone
 from schemeapp.models import SchemeCustomer, SchemePayment
-from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+# from django.db.models import Q
 
 
+
+@login_required
 def home(request):
     all_sales = Sales.objects.all().order_by("-sale_date")
     total_money = all_sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
@@ -21,11 +24,12 @@ def home(request):
     })
 
 
-
+@login_required
 def category_list(request):
     categories = Category.objects.all()
     return render(request, "category_list.html", {'categories': categories})
 
+@login_required
 def create_category(request):
     if request.method == "POST":
         name = request.POST.get('category_name')
@@ -39,6 +43,8 @@ def create_category(request):
         return redirect('category_list')
     return render(request, "create_category.html")
 
+@login_required
+# @admin_required
 def delete_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     if request.method == "POST":
@@ -47,10 +53,12 @@ def delete_category(request, category_id):
         return redirect('category_list')
     return render(request, "delete_category.html", {'category': category})
 
+@login_required
 def product_list(request):
     products = Product.objects.all()
     return render(request, "product_list.html", {'products': products})
 
+@login_required
 def create_product(request):
     categories = Category.objects.all()
     
@@ -80,7 +88,7 @@ def create_product(request):
     
     return render(request, "create_product.html", {'categories': categories})
 
-
+@login_required
 def create_search(request):
     products = Product.objects.all()
     search_query = request.GET.get('search', '')
@@ -93,7 +101,7 @@ def create_search(request):
         'search_query': search_query,
     })
   
-
+@login_required
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
@@ -120,6 +128,8 @@ def edit_product(request, product_id):
         'categories': categories
     })
 
+@login_required
+# @admin_required
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     if request.method == "POST":
@@ -128,7 +138,7 @@ def delete_product(request, product_id):
         return redirect('product_list')
     return render(request, "delete_product.html", {'product': product})
 
-
+@login_required
 def _parse_sale_items(request):
     product_ids = request.POST.getlist('product')
     quantities = request.POST.getlist('quantity')
@@ -154,8 +164,8 @@ def _parse_sale_items(request):
 
     return items
 
-
-def _validate_order_stock(items):
+@login_required
+def _validate_order_stock( request,items):
     quantities_by_product = {}
     for item in items:
         quantities_by_product[item['product']] = quantities_by_product.get(item['product'], 0) + item['quantity']
@@ -202,7 +212,7 @@ def create_sale(request):
             return render(request, "create_sale.html", {'products': products})
 
         try:
-            _validate_order_stock(items)
+            _validate_order_stock(request,items)
         except ValueError as exc:
             messages.error(request, str(exc))
             return render(request, "create_sale.html", {'products': products})
@@ -234,13 +244,13 @@ def create_sale(request):
 
     return render(request, "create_sale.html", {'products': products})
 
-
+@login_required
 def invoice(request, sale_id):
     sale = get_object_or_404(Sales, id=sale_id)
     items = sale.items.all()
     return render(request, "invoice.html", {'sale': sale, 'items': items})
 
-
+@login_required
 def edit_sale(request, sale_id):
     sale = get_object_or_404(Sales, id=sale_id)
     products = Product.objects.all()
@@ -318,6 +328,8 @@ def edit_sale(request, sale_id):
         'items': existing_items
     })
 
+@login_required
+# @admin_required
 def delete_sale(request, sale_id):
     sale = get_object_or_404(Sales, id=sale_id)
     if request.method == "POST":
@@ -326,7 +338,7 @@ def delete_sale(request, sale_id):
         return redirect('home')
     return render(request, "delete_sale.html", {'sale': sale})
 
-
+@login_required
 def sales_report(request):
     sales = Sales.objects.all().order_by('-sale_date')
 
@@ -349,7 +361,7 @@ def sales_report(request):
         'end_date': end
     })
 
-
+@login_required
 def export_sales_report_excel(request):
     sales = Sales.objects.all().order_by('-sale_date')
 
@@ -384,7 +396,7 @@ def export_sales_report_excel(request):
     wb.save(response)
     return response
 
-
+@login_required
 def dashboard(request):
     today = timezone.now().date()
 

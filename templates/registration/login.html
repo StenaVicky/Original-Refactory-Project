@@ -1,0 +1,88 @@
+{% extends 'auth_base.html' %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+
+    <div class="card shadow p-4" style="width: 400px;">
+
+        <h2 class="text-center mb-4">Login</h2>
+
+        <!-- Login Errors -->
+        {% if form.errors %}
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+
+                Invalid username or password.
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        {% endif %}
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+
+                    {{ message }}
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                {{ form.password }}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                Login
+            </button>
+
+        </form>
+
+        <hr>
+
+        <div class="text-center">
+
+            <h5>Don't have an account?</h5>
+
+            <a href="{% url 'register' %}" class="btn btn-warning mt-2">
+                Signup
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

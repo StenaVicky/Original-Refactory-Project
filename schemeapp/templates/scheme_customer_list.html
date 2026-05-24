@@ -48,6 +48,7 @@
                         <a href="{% url 'customer_scheme_detail' customer.id %}" class="btn btn-dark btn-sm">View</a>
                         <a href="{% url 'record_scheme_payment' customer.id %}" class="btn btn-success btn-sm">Payment</a>
                         <a href="{% url 'scheme_goods_pickup' customer.id %}" class="btn btn-primary btn-sm">Pickup</a>
+                        <a href="{% url 'delete_customer' customer.id %}" class="btn btn-danger btn-sm">delete</a>
                     </div>
                 </td>
             </tr>

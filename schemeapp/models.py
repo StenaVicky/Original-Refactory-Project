@@ -1,6 +1,7 @@
 from django.db import models 
 from django.utils import timezone
 from saleapp.models import Sales, Product
+# from django.core.validators import RegexValidator
 
 
 # Create your models here.
@@ -35,3 +36,6 @@ class SchemeGoodsPickup(models.Model):
 
     def __str__(self):
         return f"{self.customer.full_name} - {self.product} ({self.quantity_taken}) on {self.pickup_date}"
+    from django.db import models
+
+

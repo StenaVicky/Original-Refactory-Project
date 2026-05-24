@@ -3,49 +3,33 @@ from .models import SchemeCustomer, SchemePayment, SchemeGoodsPickup
 from saleapp.models import Product, Sales, SaleItem
 from django.db.models import Sum
 from stockapp.models import StockReceipt
-from django.utils import timezone
 from django.contrib import messages
+# from django.contrib.auth.decorators import login_required
+from .forms import SchemeCustomerForm
+
 
 
 # Create your views here.
+# @login_required
 def scheme_customer_list(request):
     customers = SchemeCustomer.objects.all().order_by("-date_registered")
     return render(request, 'scheme_customer_list.html', {'customers': customers})
 
+# @login_required
 
 def register_scheme_customer(request):
     if request.method == 'POST':
-        nin_number = request.POST.get('nin_number')
+        form = SchemeCustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Customer registered successfully!')
+            return redirect('scheme_customer_list')
+    else:
+        form = SchemeCustomerForm()
+    
+    return render(request, 'register_scheme_customer.html', {'form': form})
 
-        phone_number = request.POST.get('phone_number')
-        if not phone_number.startswith(('0', '+256', '256')):
-            messages.error(request, "Phone number must start with 0, +256, or 256.")
-            return render(request, 'register_scheme_customer.html')
-        
-        if SchemeCustomer.objects.filter(phone_number=phone_number).exists():
-            messages.error(request, "A customer with this phone number already exists.")
-            return render(request, 'register_scheme_customer.html')
-        
-
-        if SchemeCustomer.objects.filter(nin_number=nin_number).exists():
-            messages.error(request, "A customer with this NIN number already exists.")
-            return render(request, 'register_scheme_customer.html')
-        
-        SchemeCustomer.objects.create(
-            full_name=request.POST.get('full_name'),
-            nin_number=request.POST.get('nin_number'),
-            phone_number=request.POST.get('phone_number'),
-            address=request.POST.get('address'),
-            occupation=request.POST.get('occupation'),
-            employer_name=request.POST.get('employer_name'),
-            payment_plan=request.POST.get('payment_plan'),
-            date_registered=timezone.now(),
-        )
-        messages.success(request, "Customer registered successfully.")
-        return redirect('scheme_customer_list')
-    return render(request, 'register_scheme_customer.html')
-
-
+# @login_required
 def record_scheme_payment(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     if request.method == 'POST':
@@ -68,10 +52,12 @@ def record_scheme_payment(request, customer_id):
         return redirect("temporary_receipt", payment_id=payment.id)
     return render(request, "record_scheme_payment.html", {"customer": customer})
 
+# @login_required
 def temporary_receipt(request, payment_id):
     payment = get_object_or_404(SchemePayment,id=payment_id)
     return render(request,"temporary_receipt.html",{"payment":payment})
 
+# @login_required
 def customer_scheme_detail(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     payments = SchemePayment.objects.filter(customer=customer)
@@ -91,12 +77,13 @@ def customer_scheme_detail(request, customer_id):
         'balance': balance,
     })
 
+# @login_required
 def scheme_goods_pickup(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     products = Product.objects.filter(
         category_name__category_name__in=[
-            "cement",
-            "iron sheets",
+            "Cement",
+            "Iron sheets",
             "Iron bars",
         ]
     )
@@ -159,6 +146,14 @@ def scheme_goods_pickup(request, customer_id):
          "customer": customer,
          "products": products
    })
+def delete_customer(request, customer_id):
+    customer = get_object_or_404(SchemeCustomer, id=customer_id)
+    if request.method == 'POST':
+        customer.delete()
+        return redirect('scheme_customer_list')
+    return render(request, 'delete_customer.html', {'customer': customer})
+
+# @login_required
 def customer_report(request):
     customers = SchemeCustomer.objects.all()
     

@@ -1,6 +1,13 @@
-{% extends 'base.html' %}
-
 {% block content %}
+<div class="container text-center mt-5">
+    <div class="card">
+        <div class="card-header" style="background-color: #eb0c1f; color: white;">
+            <h4>Confirm Logout</h4>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to logout?</p>
+            <a href="{% url 'login_view' %}" class="btn btn-danger">Yes, Logout</a>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-sm-10 col-md-8 col-lg-6">
@@ -15,7 +22,7 @@
                 <div class="card-body p-4 text-center">
                     <p class="mb-4">Are you sure you want to log out of the NYONDO Hardware system?</p>
                     <div class="d-flex justify-content-center gap-2 flex-wrap">
-                        <a href="{% url 'login_view' %}" class="btn btn-danger btn-sm px-4">Yes, Logout</a>
+                        <a href="{% url 'login' %}" class="btn btn-danger btn-sm px-4">Yes, Logout</a>
                         <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm px-4">Cancel</a>
                     </div>
                 </div>
@@ -23,4 +30,3 @@
         </div>
     </div>
 </div>
-{% endblock %}

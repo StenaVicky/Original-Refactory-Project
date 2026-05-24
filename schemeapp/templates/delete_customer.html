@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Customer{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h4>Confirm Delete</h4>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete <strong>{{ customer.full_name }}</strong>?</p>
+            <form method="POST">
+                {% csrf_token %}
+                <a href="{% url 'scheme_customer_list' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
