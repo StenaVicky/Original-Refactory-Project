@@ -1,3 +1,4 @@
+
 {% extends 'auth_base.html' %}
 
 {% block title %}
@@ -5,50 +6,191 @@ Login
 {% endblock %}
 
 {% block content %}
+<style>
+    .login-page {
+        width: 100%;
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px;
+        background:
+            radial-gradient(circle at top left, rgba(26, 95, 122, 0.12), transparent 32%),
+            linear-gradient(135deg, #f7fbfd 0%, #eef4f6 48%, #ffffff 100%);
+    }
 
+    .login-shell {
+        width: min(980px, 100%);
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        overflow: hidden;
+        border: 1px solid rgba(26, 95, 122, 0.12);
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 22px 55px rgba(15, 45, 60, 0.14);
+    }
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    .login-image-panel {
+        position: relative;
+        min-height: 560px;
+        background: linear-gradient(145deg, #164f66, #24758f);
+        overflow: hidden;
+    }
 
-    <div class="card shadow p-4" style="width: 400px;">
+    .login-image-panel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        opacity: 0.92;
+    }
 
-        <h2 class="text-center mb-4">Login</h2>
+    .login-image-placeholder {
+        position: absolute;
+        inset: 24px;
+        display: flex;
+        align-items: end;
+        padding: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 8px;
+        color: #ffffff;
+        background:
+            linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.42)),
+            repeating-linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.08) 0,
+                rgba(255, 255, 255, 0.08) 1px,
+                transparent 1px,
+                transparent 14px
+            );
+    }
 
-        <!-- Login Errors -->
-        {% if form.errors %}
+    .login-image-placeholder h1 {
+        margin: 0 0 8px;
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1.1;
+    }
 
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    .login-image-placeholder p {
+        margin: 0;
+        max-width: 320px;
+        color: rgba(255, 255, 255, 0.86);
+    }
 
-                Invalid username or password.
+    .login-form-panel {
+        display: flex;
+        align-items: center;
+        padding: 44px;
+    }
 
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-                </button>
+    .login-card {
+        width: 100%;
+    }
 
-            </div>
+    .login-card h2 {
+        color: #123f52;
+        font-weight: 800;
+        letter-spacing: 0;
+    }
 
-        {% endif %}
-        {% if messages %}
+    .login-card .form-label {
+        color: #274653;
+        font-weight: 700;
+        font-size: 0.92rem;
+    }
 
-            {% for message in messages %}
+    .login-card input {
+        width: 100%;
+        min-height: 46px;
+        border: 1px solid #d9e4e8;
+        border-radius: 8px;
+        padding: 10px 13px;
+        color: #172b34;
+        background-color: #fbfdfe;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
 
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
+    .login-card input:focus {
+        border-color: #1a5f7a;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(26, 95, 122, 0.13);
+    }
 
-                    {{ message }}
+    .login-card .btn-primary {
+        min-height: 46px;
+        border: 0;
+        border-radius: 8px;
+        background: #1a5f7a;
+        font-weight: 700;
+        box-shadow: 0 12px 22px rgba(26, 95, 122, 0.22);
+    }
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert">
-                    </button>
+    .login-card .btn-primary:hover {
+        background: #154d63;
+    }
 
+    .signup-box {
+        padding: 18px;
+        border-radius: 8px;
+        background: #f7fafb;
+        border: 1px solid #e4edf0;
+    }
+
+    .signup-box h5 {
+        margin: 0;
+        color: #45616b;
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .signup-box .btn-warning {
+        border: 0;
+        border-radius: 8px;
+        color: #1f2a30;
+        font-weight: 700;
+        background: #f5c542;
+    }
+
+    @media (max-width: 850px) {
+        .login-shell {
+            grid-template-columns: 1fr;
+        }
+
+        .login-image-panel {
+            min-height: 260px;
+        }
+
+        .login-form-panel {
+            padding: 30px 22px;
+        }
+    }
+</style>
+
+<div class="login-page">
+
+    <div class="login-shell">
+
+        <div class="login-image-panel">
+            <!-- Add your image path in the src below, for example: src="/static/your-image.jpg" -->
+           
+            <div class="login-image-placeholder">
+                <div>
+                    <h1 style="color: #e86a2c;">Nyondo Hardware System</h1>
+                    <p>Welcome back. Sign in to manage your stock, sales, and daily hardware operations.</p>
                 </div>
+            </div>
+        </div>
 
-            {% endfor %}
+        <div class="login-form-panel">
 
-        {% endif %}
+            <div class="login-card">
 
+                <h2 class="mb-2">Login</h2>
+                <p class="text-muted mb-4">Enter your account details to continue.</p>
+
+        
         <form method="POST">
 
             {% csrf_token %}
@@ -71,7 +213,7 @@ Login
 
         <hr>
 
-        <div class="text-center">
+        <div class="signup-box text-center">
 
             <h5>Don't have an account?</h5>
 
@@ -82,6 +224,10 @@ Login
         </div>
 
     </div>
+
+</div>
+
+</div>
 
 </div>
 

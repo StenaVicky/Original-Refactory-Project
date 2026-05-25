@@ -1,19 +1,33 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import SchemeCustomer, SchemePayment, SchemeGoodsPickup
 from saleapp.models import Product, Sales, SaleItem
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from stockapp.models import StockReceipt
 from django.contrib import messages
 # from django.contrib.auth.decorators import login_required
-from .forms import SchemeCustomerForm
+from nyondoproject.form_messages import clean_form_errors
+from .forms import SchemeCustomerForm, SchemePaymentForm, SchemeGoodsPickupForm
 
 
 
 # Create your views here.
 # @login_required
 def scheme_customer_list(request):
+    search_query = request.GET.get('search', '').strip()
     customers = SchemeCustomer.objects.all().order_by("-date_registered")
-    return render(request, 'scheme_customer_list.html', {'customers': customers})
+
+    if search_query:
+        customers = customers.filter(
+            Q(full_name__icontains=search_query) |
+            Q(nin_number__icontains=search_query) |
+            Q(phone_number__icontains=search_query) |
+            Q(employer_name__icontains=search_query)
+        )
+
+    return render(request, 'scheme_customer_list.html', {
+        'customers': customers,
+        'search_query': search_query
+    })
 
 # @login_required
 
@@ -24,6 +38,7 @@ def register_scheme_customer(request):
             form.save()
             messages.success(request, 'Customer registered successfully!')
             return redirect('scheme_customer_list')
+        messages.error(request, clean_form_errors(form))
     else:
         form = SchemeCustomerForm()
     
@@ -33,23 +48,12 @@ def register_scheme_customer(request):
 def record_scheme_payment(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     if request.method == 'POST':
-        try:
-            amount_paid = float(request.POST.get('amount_paid', 0))
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter a valid payment amount.")
-            return render(request, "record_scheme_payment.html", {"customer": customer})
-
-        if amount_paid <= 0:
-            messages.error(request, "Payment amount must be greater than zero.")
-            return render(request, "record_scheme_payment.html", {"customer": customer})
-
-        payment = SchemePayment.objects.create(
-            customer=customer,
-            amount_paid=amount_paid,
-            notes=request.POST.get("notes")
-        )
-        messages.success(request, "Payment recorded successfully.")
-        return redirect("temporary_receipt", payment_id=payment.id)
+        form = SchemePaymentForm(request.POST)
+        if form.is_valid():
+            payment = SchemePayment.objects.create(customer=customer, **form.cleaned_data)
+            messages.success(request, "Payment recorded successfully.")
+            return redirect("temporary_receipt", payment_id=payment.id)
+        messages.error(request, clean_form_errors(form))
     return render(request, "record_scheme_payment.html", {"customer": customer})
 
 # @login_required
@@ -89,29 +93,22 @@ def scheme_goods_pickup(request, customer_id):
     )
     
     if request.method == "POST":
-        product = get_object_or_404(Product, id=request.POST.get('product'))
-        try:
-            quantity = int(request.POST.get("quantity", 0))
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter a valid pickup quantity.")
+        form = SchemeGoodsPickupForm(request.POST, products=products)
+        if not form.is_valid():
+            messages.error(request, clean_form_errors(form))
             return render(request, "scheme_goods_pickup.html", {
                 "customer": customer,
                 "products": products
             })
 
-        if quantity <= 0:
-            messages.error(request, "Quantity must be greater than zero.")
-            return render(request, "scheme_goods_pickup.html", {
-                "customer": customer,
-                "products": products
-            })
-
+        product = form.cleaned_data['product']
+        quantity = form.cleaned_data['quantity']
         total_received = StockReceipt.objects.filter(product=product).aggregate(total=Sum('quantity_received'))['total'] or 0
         total_sold = SaleItem.objects.filter(product=product).aggregate(total=Sum("quantity"))["total"] or 0
         available_stock = total_received - total_sold
 
         if quantity > available_stock:
-            messages.error(request, f"Not enough stock. Available stock is {available_stock}.")
+            messages.error(request, "Not enough stock available")
             return render(request, "scheme_goods_pickup.html", {
                 "customer": customer,
                 "products": products

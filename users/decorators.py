@@ -10,7 +10,7 @@ def admin_required(view_func):
 
 def sales_manager_required(view_func):
     return user_passes_test(
-        lambda u: u.groups.filter(name='sales_manager').exists()
+        lambda u: u.groups.filter(name='home').exists()
 
     )(view_func)
 

@@ -2,45 +2,63 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from saleapp.models import Category, Product, Sales, SaleItem
 from stockapp.models import StockReceipt
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.http import HttpResponse
 from openpyxl import Workbook
 from datetime import timedelta
 from django.utils import timezone
 from schemeapp.models import SchemeCustomer, SchemePayment
 from django.contrib.auth.decorators import login_required
-# from django.db.models import Q
-
-
-
+from nyondoproject.form_messages import clean_form_errors, clean_message
+from .forms import CategoryForm, ProductForm, SaleForm
 @login_required
 def home(request):
+    search_query = request.GET.get('search', '').strip()
     all_sales = Sales.objects.all().order_by("-sale_date")
+
+    if search_query:
+        all_sales = all_sales.filter(
+            Q(customer_name__icontains=search_query) |
+            Q(items__product__product_name__icontains=search_query)
+        )
+        if search_query.isdigit():
+            all_sales = all_sales | Sales.objects.filter(id=search_query)
+        all_sales = all_sales.distinct().order_by("-sale_date")
+
     total_money = all_sales.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
     
     return render(request, "home.html", {
         'sales': all_sales,
-        'total_sales_value': total_money
+        'total_sales_value': total_money,
+        'search_query': search_query
     })
 
 
 @login_required
 def category_list(request):
+    search_query = request.GET.get('search', '').strip()
     categories = Category.objects.all()
-    return render(request, "category_list.html", {'categories': categories})
+
+    if search_query:
+        categories = categories.filter(
+            Q(category_name__icontains=search_query) |
+            Q(slug__icontains=search_query)
+        )
+
+    return render(request, "category_list.html", {
+        'categories': categories,
+        'search_query': search_query
+    })
 
 @login_required
 def create_category(request):
     if request.method == "POST":
-        name = request.POST.get('category_name')
-        slug = request.POST.get('slug')
-        if not name or not slug:
-            messages.error(request, "Please provide both category name and slug.")
-            return render(request, "create_category.html")
-
-        Category.objects.create(category_name=name, slug=slug)
-        messages.success(request, "Category created successfully.")
-        return redirect('category_list')
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category created successfully.")
+            return redirect('category_list')
+        messages.error(request, clean_form_errors(form))
     return render(request, "create_category.html")
 
 @login_required
@@ -55,51 +73,38 @@ def delete_category(request, category_id):
 
 @login_required
 def product_list(request):
+    search_query = request.GET.get('search', '').strip()
     products = Product.objects.all()
-    return render(request, "product_list.html", {'products': products})
+
+    if search_query:
+        products = products.filter(
+            Q(product_name__icontains=search_query) |
+            Q(category_name__category_name__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    return render(request, "product_list.html", {
+        'products': products,
+        'search_query': search_query
+    })
 
 @login_required
 def create_product(request):
     categories = Category.objects.all()
     
     if request.method == "POST":
-        cat = get_object_or_404(Category, id=request.POST.get('category'))
-        product_name = request.POST.get('product_name')
-        if not product_name:
-            messages.error(request, "Product name is required.")
-            return render(request, "create_product.html", {'categories': categories})
-
-        try:
-            cost_price = float(request.POST.get('cost_price', 0))
-            unit_price = float(request.POST.get('unit_price', 0))
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter valid numeric prices.")
-            return render(request, "create_product.html", {'categories': categories})
-
-        Product.objects.create(
-            category_name=cat,
-            product_name=product_name,
-            cost_price=cost_price,
-            unit_price=unit_price,
-            description=request.POST.get('description', '')
-        )
-        messages.success(request, "Product created successfully.")
-        return redirect('product_list')
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Product created successfully.")
+            return redirect('product_list')
+        messages.error(request, clean_form_errors(form))
     
     return render(request, "create_product.html", {'categories': categories})
 
 @login_required
 def create_search(request):
-    products = Product.objects.all()
-    search_query = request.GET.get('search', '')
-    
-    if search_query:
-        products = products.filter(name__icontains=search_query)
-    
-    return render(request, 'products.html', {
-        'products': products,
-        'search_query': search_query,
-    })
+    return product_list(request)
   
 @login_required
 def edit_product(request, product_id):
@@ -107,21 +112,12 @@ def edit_product(request, product_id):
     categories = Category.objects.all()
     
     if request.method == "POST":
-        cat = get_object_or_404(Category, id=request.POST.get('category'))
-        product.category_name = cat
-        product.product_name = request.POST.get('product_name')
-        try:
-            product.unit_price = float(request.POST.get('unit_price', 0))
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter a valid selling price.")
-            return render(request, "edit_product.html", {
-                'product': product,
-                'categories': categories
-            })
-        product.description = request.POST.get('description', '')
-        product.save()
-        messages.success(request, "Product updated successfully.")
-        return redirect('product_list')
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Product updated successfully.")
+            return redirect('product_list')
+        messages.error(request, clean_form_errors(form))
     
     return render(request, "edit_product.html", {
         'product': product,
@@ -151,21 +147,20 @@ def _parse_sale_items(request):
         try:
             qty = int(quantity)
         except (TypeError, ValueError):
-            raise ValueError("Please enter valid quantities for each product.")
+            raise ValueError("Please enter valid quantities for each product")
 
         if qty <= 0:
-            raise ValueError("Quantities must be greater than zero.")
+            raise ValueError("Quantities must be greater than zero")
 
         product = get_object_or_404(Product, id=product_id)
         items.append({'product': product, 'quantity': qty})
 
     if not items:
-        raise ValueError("Please add at least one product to the sale.")
+        raise ValueError("Please add at least one product to the sale")
 
     return items
 
-@login_required
-def _validate_order_stock( request,items):
+def _validate_order_stock(items):
     quantities_by_product = {}
     for item in items:
         quantities_by_product[item['product']] = quantities_by_product.get(item['product'], 0) + item['quantity']
@@ -175,7 +170,7 @@ def _validate_order_stock( request,items):
         sold = SaleItem.objects.filter(product=product).aggregate(Sum('quantity'))['quantity__sum'] or 0
         available = received - sold
         if required_qty > available:
-            raise ValueError(f"Only {available} items available for {product.product_name}.")
+            raise ValueError("Not enough stock available for selected product")
 
 
 def _calculate_order_total(items, distance):
@@ -193,28 +188,24 @@ def create_sale(request):
     products = Product.objects.all()
 
     if request.method == "POST":
-        customer_name = request.POST.get('customer_name', '').strip()
+        form = SaleForm(request.POST)
+        if not form.is_valid():
+            messages.error(request, clean_form_errors(form))
+            return render(request, "create_sale.html", {'products': products})
+
+        customer_name = form.cleaned_data['customer_name'].strip()
+        distance = form.cleaned_data['distance']
 
         try:
             items = _parse_sale_items(request)
         except ValueError as exc:
-            messages.error(request, str(exc))
+            messages.error(request, clean_message(exc))
             return render(request, "create_sale.html", {'products': products})
 
         try:
-            distance = float(request.POST.get('distance', 0))
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter a valid distance value.")
-            return render(request, "create_sale.html", {'products': products})
-
-        if distance <= 0:
-            messages.error(request, "Distance must be greater than zero.")
-            return render(request, "create_sale.html", {'products': products})
-
-        try:
-            _validate_order_stock(request,items)
+            _validate_order_stock(items)
         except ValueError as exc:
-            messages.error(request, str(exc))
+            messages.error(request, clean_message(exc))
             return render(request, "create_sale.html", {'products': products})
 
         total_amount, transport_fee, transport_note = _calculate_order_total(items, distance)
@@ -257,30 +248,22 @@ def edit_sale(request, sale_id):
     existing_items = sale.items.all()
 
     if request.method == "POST":
-        customer_name = request.POST.get('customer_name', '').strip()
+        form = SaleForm(request.POST)
+        if not form.is_valid():
+            messages.error(request, clean_form_errors(form))
+            return render(request, "edit_sale.html", {
+                'sale': sale,
+                'products': products,
+                'items': existing_items
+            })
+
+        customer_name = form.cleaned_data['customer_name'].strip()
+        distance = form.cleaned_data['distance']
 
         try:
             items = _parse_sale_items(request)
         except ValueError as exc:
-            messages.error(request, str(exc))
-            return render(request, "edit_sale.html", {
-                'sale': sale,
-                'products': products,
-                'items': existing_items
-            })
-
-        try:
-            distance = float(request.POST.get('distance', 0))
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter a valid distance value.")
-            return render(request, "edit_sale.html", {
-                'sale': sale,
-                'products': products,
-                'items': existing_items
-            })
-
-        if distance <= 0:
-            messages.error(request, "Distance must be greater than zero.")
+            messages.error(request, clean_message(exc))
             return render(request, "edit_sale.html", {
                 'sale': sale,
                 'products': products,
@@ -290,7 +273,7 @@ def edit_sale(request, sale_id):
         try:
             _validate_order_stock(items)
         except ValueError as exc:
-            messages.error(request, str(exc))
+            messages.error(request, clean_message(exc))
             return render(request, "edit_sale.html", {
                 'sale': sale,
                 'products': products,

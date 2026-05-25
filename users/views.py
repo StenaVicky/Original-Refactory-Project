@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group
 from django.contrib import messages
-from .forms import UserRegistrationForm
+from .forms import PlainAuthenticationForm, UserRegistrationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 
@@ -42,6 +42,11 @@ def register(request):
 class CustomLoginView(LoginView):
 
     template_name = 'registration/login.html'
+    authentication_form = PlainAuthenticationForm
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Invalid username or password')
+        return super().form_invalid(form)
 
     def get_success_url(self):
         user = self.request.user
@@ -53,7 +58,7 @@ class CustomLoginView(LoginView):
             return reverse_lazy('category_list')
 
         if user.groups.filter(name='stock_manager').exists():
-            return reverse_lazy('stock_report')
+            return reverse_lazy('stock_receipt_list')
 
         return reverse_lazy('login')
 

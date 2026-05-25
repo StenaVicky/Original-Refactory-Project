@@ -1,9 +1,31 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+
+
+class PlainAuthenticationForm(AuthenticationForm):
+    use_required_attribute = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if hasattr(field, "max_length"):
+                field.max_length = None
+            field.widget.attrs.pop("maxlength", None)
+            field.widget.attrs.pop("required", None)
 
 
 class UserRegistrationForm(UserCreationForm):
+    use_required_attribute = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if hasattr(field, "max_length"):
+                field.max_length = None
+            field.widget.attrs.pop("maxlength", None)
+            field.widget.attrs.pop("required", None)
+
     ROLE_CHOICES=(
         ('admin', 'Admin'),
         ('sales_manager', 'Sales_Manager'),

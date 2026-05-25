@@ -5,8 +5,10 @@ from saleapp.models import Product, SaleItem
 from .models import StockReceipt
 from django.http import HttpResponse
 from openpyxl import Workbook
-from decimal import Decimal
 from django.contrib.auth.decorators import login_required
+from nyondoproject.form_messages import clean_form_errors
+from .forms import StockReceiptForm
+
 
 
 
@@ -22,38 +24,12 @@ def create_stock_receipt(request):
     products = Product.objects.all()
 
     if request.method == "POST":
-        product = get_object_or_404(Product, id=request.POST.get("product"))
-        supplier_name = request.POST.get("supplier_name")
-        try:
-            quantity_received = int(request.POST.get("quantity_received", 0))
-            unit_cost = Decimal(request.POST.get("unit_cost"))
-            selling_price = Decimal(request.POST.get("selling_price") or 0)
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter valid numeric values for quantity, cost, and selling price.")
-            return render(request, "create_stock_receipt.html", {"products": products})
-
-        if quantity_received <= 0:
-            messages.error(request, "Quantity received must be a positive number.")
-            return render(request, "create_stock_receipt.html", {"products": products})
-
-        if unit_cost <= 0:
-            messages.error(request, "Unit cost must be greater than zero.")
-            return render(request, "create_stock_receipt.html", {"products": products})
-
-        if selling_price <= 0:
-            messages.error(request, "Selling price must be greater than zero.")
-            return render(request, "create_stock_receipt.html", {"products": products})
-
-        receipt = StockReceipt.objects.create(
-            product=product,
-            supplier_name=supplier_name,
-            quantity_received=quantity_received,
-            unit_cost=unit_cost,
-            selling_price=selling_price,
-            supplier_paid=request.POST.get("supplier_paid") == "on"
-        )
-        messages.success(request, "Stock receipt created successfully.")
-        return redirect("goods_received_note", receipt_id=receipt.id)
+        form = StockReceiptForm(request.POST)
+        if form.is_valid():
+            receipt = form.save()
+            messages.success(request, "Stock receipt created successfully.")
+            return redirect("goods_received_note", receipt_id=receipt.id)
+        messages.error(request, clean_form_errors(form))
 
     return render(request, "create_stock_receipt.html", {
         "products": products
@@ -73,48 +49,12 @@ def edit_stock_receipt(request, receipt_id):
     products = Product.objects.all()
 
     if request.method == "POST":
-        product = get_object_or_404(Product, id=request.POST.get("product"))
-        try:
-            quantity_received = int(request.POST.get("quantity_received", 0))
-            unit_cost = Decimal(request.POST.get("unit_cost") or 0)
-            selling_price = Decimal(request.POST.get("selling_price") or 0)
-        except (TypeError, ValueError):
-            messages.error(request, "Please enter valid numeric values for quantity, cost, and selling price.")
-            return render(request, "edit_stock_receipt.html", {
-                "receipt": receipt,
-                "products": products
-            })
-
-        if quantity_received <= 0:
-            messages.error(request, "Quantity received must be a positive number.")
-            return render(request, "edit_stock_receipt.html", {
-                "receipt": receipt,
-                "products": products
-            })
-
-        if unit_cost <= 0:
-            messages.error(request, "Unit cost must be greater than zero.")
-            return render(request, "edit_stock_receipt.html", {
-                "receipt": receipt,
-                "products": products
-            })
-
-        if selling_price <= 0:
-            messages.error(request, "Selling price must be greater than zero.")
-            return render(request, "edit_stock_receipt.html", {
-                "receipt": receipt,
-                "products": products
-            })
-
-        receipt.product = product
-        receipt.supplier_name = request.POST.get("supplier_name")
-        receipt.quantity_received = quantity_received
-        receipt.unit_cost = unit_cost
-        receipt.selling_price = selling_price
-        receipt.supplier_paid = request.POST.get("supplier_paid") == "on"
-        receipt.save()
-        messages.success(request, "Stock receipt updated successfully.")
-        return redirect("goods_received_note", receipt_id=receipt.id)
+        form = StockReceiptForm(request.POST, instance=receipt)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Stock receipt updated successfully.")
+            return redirect("goods_received_note", receipt_id=receipt.id)
+        messages.error(request, clean_form_errors(form))
 
     return render(request, "edit_stock_receipt.html", {
         "receipt": receipt,

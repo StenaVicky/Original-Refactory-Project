@@ -15,7 +15,7 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Category</label>
-                            <select name="category" class="form-select form-select-sm" required>
+                            <select name="category" class="form-select form-select-sm">
                                 {% for category in categories %}
                                 <option value="{{ category.id }}" {% if product.category_name.id == category.id %}selected{% endif %}>{{ category.category_name }}</option>
                                 {% endfor %}
@@ -24,7 +24,7 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Product Name</label>
-                            <input type="text" name="product_name" value="{{ product.product_name }}" class="form-control form-control-sm" required>
+                            <input type="text" name="product_name" value="{{ product.product_name }}" class="form-control form-control-sm">
                         </div>
 
                         <div class="mb-3">
@@ -35,7 +35,7 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Description</label>
-                            <textarea name="description" class="form-control form-control-sm" rows="4" required>{{ product.description }}</textarea>
+                            <textarea name="description" class="form-control form-control-sm" rows="4">{{ product.description }}</textarea>
                         </div>
 
                         <div class="d-flex gap-2 flex-wrap">

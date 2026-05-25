@@ -30,7 +30,7 @@
 
                 <div class="col-12">
                     <label class="form-label">Product</label>
-                    <select name="product" class="form-select" required>
+                    <select name="product" class="form-select">
                         <option value="">Select product</option>
                         {% for product in products %}
                             <option value="{{ product.id }}" {% if receipt.product.id == product.id %}selected{% endif %}>
@@ -42,23 +42,23 @@
 
                 <div class="col-md-6">
                     <label class="form-label">Supplier Name</label>
-                    <input type="text" name="supplier_name" value="{{ receipt.supplier_name }}" class="form-control" required>
+                    <input type="text" name="supplier_name" value="{{ receipt.supplier_name }}" class="form-control">
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label">Quantity Received</label>
-                    <input type="number" name="quantity_received" min="1" value="{{ receipt.quantity_received }}" class="form-control" required>
+                    <input type="text" name="quantity_received" value="{{ receipt.quantity_received }}" class="form-control">
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label">Unit Cost</label>
-                    <input type="number" name="unit_cost" step="0.01" min="0.01" value="{{ receipt.unit_cost }}" class="form-control" required>
+                    <input type="text" name="unit_cost" value="{{ receipt.unit_cost }}" class="form-control">
                     <div class="form-text">Updates the product's current cost price.</div>
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label">Selling Price</label>
-                    <input type="number" name="selling_price" step="0.01" min="0.01" value="{{ receipt.selling_price }}" class="form-control" required>
+                    <input type="text" name="selling_price" value="{{ receipt.selling_price }}" class="form-control">
                     <div class="form-text">Updates the product's current selling price.</div>
                 </div>
 

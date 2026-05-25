@@ -15,7 +15,7 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Category</label>
-                            <select name="category" class="form-select form-select-sm" required>
+                            <select name="category" class="form-select form-select-sm">
                                 <option value="">Select category</option>
                                 {% for category in categories %}
                                 <option value="{{ category.id }}">{{ category.category_name }}</option>
@@ -26,7 +26,7 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Product Name</label>
-                            <input type="text" name="product_name" class="form-control form-control-sm" required>
+                            <input type="text" name="product_name" class="form-control form-control-sm">
                         </div>
 
                         <div class="mb-3">
@@ -37,7 +37,7 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Description</label>
-                            <textarea name="description" class="form-control form-control-sm" rows="4" required></textarea>
+                            <textarea name="description" class="form-control form-control-sm" rows="4"></textarea>
                         </div>
 
                         <div class="d-flex gap-2 flex-wrap">

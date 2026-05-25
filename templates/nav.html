@@ -24,6 +24,27 @@
         background-color: #1a5f7a;
     }
 
+    .back-arrow-btn {
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        border-radius: 8px;
+        color: white;
+        background-color: rgba(255, 255, 255, 0.08);
+        font-size: 1.25rem;
+        text-decoration: none;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .back-arrow-btn:hover {
+        color: white;
+        border-color: rgba(255, 255, 255, 0.75);
+        background-color: rgba(255, 255, 255, 0.18);
+    }
+
     .sidebar {
         width: 250px;
         height: 100vh;
@@ -68,19 +89,30 @@
 
     <div class="container-fluid d-flex justify-content-between align-items-center">
 
-        <!-- Logo -->
-        <a href="{% url 'home' %}"
-           class="navbar-brand fw-bold d-flex align-items-center">
+        <div class="d-flex align-items-center">
+            <button
+                type="button"
+                class="back-arrow-btn me-3"
+                onclick="goBackToPreviousPage()"
+                aria-label="Go back"
+                title="Go back">
+                <i class="bi bi-arrow-left"></i>
+            </button>
 
-            <img src="{% static 'stenalogo.png' %}"
-                 alt="logo"
-                 width="60"
-                 height="60"
-                 class="rounded-circle me-2">
+            <!-- Logo -->
+            <a href="{% url 'home' %}"
+               class="navbar-brand fw-bold d-flex align-items-center">
 
-            Nyondo Hardware System
+                <img src="{% static 'stenalogo.png' %}"
+                     alt="logo"
+                     width="60"
+                     height="60"
+                     class="rounded-circle me-2">
 
-        </a>
+                Nyondo Hardware System
+
+            </a>
+        </div>
 
         <!-- User Section -->
         <div class="d-flex align-items-center">
