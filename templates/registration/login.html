@@ -1,25 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyondo Hardware System</title>
 
-{% extends 'auth_base.html' %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-{% block title %}
-Login
-{% endblock %}
+    <style>
 
-{% block content %}
+        body{
+            background-color:#f8f9fa;
+        
+        }
+
+        .top-navbar{
+            background-color:#1a5f7a;
+        }
+
+        .back-arrow-btn {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 8px;
+            color: white;
+            background-color: #e86a2a;
+            font-size: 1.25rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .back-arrow-btn:hover {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.75);
+            background-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .auth-container{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding-top:80px;
+        }
+
+        .message-popup {
+            position: fixed;
+            top: 86px;
+            right: 24px;
+            z-index: 1080;
+            width: min(420px, calc(100vw - 32px));
+        }
+
+        .message-popup .alert {
+            border-radius: 8px;
+            box-shadow: 0 14px 35px rgba(18, 63, 82, 0.18);
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+            word-break: normal;
+        }
+
+        @media (max-width: 576px) {
+            .message-popup {
+                left: 16px;
+                right: 16px;
+                width: auto;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar top-navbar navbar-dark fixed-top">
+        <div class="container-fluid">
+
+            <div class="d-flex align-items-center">
+                <button
+                    type="button"
+                    class="back-arrow-btn me-3"
+                    onclick="goBackToPreviousPage()"
+                    aria-label="Go back"
+                    title="Go back">
+                    &larr;
+                </button>
+
+                
+                <a href="/saleapp/" class="navbar-brand fw-bold">
+
+                    <img src="/static/stenalogo.png"
+                         alt="logo"
+                         width="60"
+                         height="60"
+                         class="rounded-circle me-2">
+
+                    Nyondo Hardware System
+
+                </a>
+            </div>
+
+            <!-- Auth Buttons -->
+            <div class="d-flex">
+
+                <a href="/login/"
+                   class="btn btn-outline-light me-2">
+                    Login
+                </a>
+
+
+            </div>
+
+        </div>
+    </nav>
+    
+
+    <div class="auth-container">
+        
+
+        
 <style>
-    .login-page {
-        width: 100%;
+        .login-page {
+            width: 100%;
         min-height: calc(100vh - 120px);
         display: flex;
         align-items: center;
-        justify-content: center;
-        padding: 32px 16px;
+            justify-content: center;
+            padding: 32px 16px;
         background:
             radial-gradient(circle at top left, rgba(26, 95, 122, 0.12), transparent 32%),
             linear-gradient(135deg, #f7fbfd 0%, #eef4f6 48%, #ffffff 100%);
-    }
+        }
 
-    .login-shell {
+        .back-arrow-btn {
+            display: none;
+        }
+
+        .login-shell {
         width: min(980px, 100%);
         display: grid;
         grid-template-columns: 1.05fr 0.95fr;
@@ -47,7 +167,10 @@ Login
 
     .login-image-placeholder {
         position: absolute;
-        inset: 24px;
+        bottom: 24px;
+        left: 24px;
+        right: 24px;
+        top: auto;
         display: flex;
         align-items: end;
         padding: 28px;
@@ -100,6 +223,52 @@ Login
         font-size: 0.92rem;
     }
 
+    /* Icons on the Left */
+    .input-group-custom {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-group-custom input {
+        padding-left: 44px !important; 
+    }
+
+    .field-icon {
+        position: absolute;
+        left: 14px;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+        pointer-events: none;
+    }
+
+    .toggle-password-btn {
+        position: absolute;
+        left: 14px;
+        background: none;
+        border: none;
+        padding: 0;
+        color: #64748b;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 6;
+        transition: color 0.2s;
+    }
+
+    .toggle-password-btn:hover {
+        color: #1a5f7a;
+    }
+
+    .field-icon svg, .toggle-password-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
     .login-card input {
         width: 100%;
         min-height: 46px;
@@ -142,6 +311,7 @@ Login
         margin: 0;
         color: #45616b;
         font-size: 0.95rem;
+        
         font-weight: 600;
     }
 
@@ -160,12 +330,14 @@ Login
 
         .login-image-panel {
             min-height: 260px;
+            
         }
 
         .login-form-panel {
             padding: 30px 22px;
         }
     }
+    
 </style>
 
 <div class="login-page">
@@ -173,7 +345,7 @@ Login
     <div class="login-shell">
 
         <div class="login-image-panel">
-            <!-- Add your image path in the src below, for example: src="/static/your-image.jpg" -->
+            <img src="/static/nails.jpg" alt="logo" width="50px" height="50px">
            
             <div class="login-image-placeholder">
                 <div>
@@ -190,6 +362,15 @@ Login
                 <h2 class="mb-2">Login</h2>
                 <p class="text-muted mb-4">Enter your account details to continue.</p>
 
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger py-2 mb-3" style="font-size: 0.85rem; border-radius: 8px;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
         
         <form method="POST">
 
@@ -197,12 +378,27 @@ Login
 
             <div class="mb-3">
                 <label class="form-label">Username</label>
-                {{ form.username }}
+                <div class="input-group-custom">
+                    <span class="field-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </span>
+                    <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" id="id_username" required>
+                </div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Password</label>
-                {{ form.password }}
+                <div class="input-group-custom">
+                    <button type="button" class="toggle-password-btn" id="togglePassword">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.301 8.844 7.428 6 12 6s8.699 2.844 9.964 5.678c.04.088.04.184 0 .272-1.265 2.834-5.39 5.678-12 5.678s-8.699-2.844-9.964-5.678a1.012 1.012 0 010-.644z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                    <input type="password" name="password" autocomplete="current-password" id="id_password" required>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary w-100">
@@ -213,14 +409,7 @@ Login
 
         <hr>
 
-        <div class="signup-box text-center">
-
-            <h5>Don't have an account?</h5>
-
-            <a href="{% url 'register' %}" class="btn btn-warning mt-2">
-                Signup
-            </a>
-
+     
         </div>
 
     </div>
@@ -231,4 +420,41 @@ Login
 
 </div>
 
-{% endblock %}
+
+        
+    </div>
+
+    <script>
+        function goBackToPreviousPage() {
+            if (window.history.length > 1) {
+                window.history.back();
+                return;
+            }
+
+            window.location.href = "/saleapp/";
+        }
+
+        // Password visibility toggle logic
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#id_password');
+        const eyeIcon = document.querySelector('#eyeIcon');
+
+        const eyeOpen = `
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.301 8.844 7.428 6 12 6s8.699 2.844 9.964 5.678c.04.088.04.184 0 .272-1.265 2.834-5.39 5.678-12 5.678s-8.699-2.844-9.964-5.678a1.012 1.012 0 010-.644z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        `;
+        const eyeClosed = `
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.477 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.477 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+        `;
+
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function () {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                eyeIcon.innerHTML = isPassword ? eyeClosed : eyeOpen;
+            });
+        }
+    </script>
+    
+</body>
+</html>

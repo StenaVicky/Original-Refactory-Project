@@ -30,7 +30,7 @@
                     </option>
 
                     {% for product in products %}
-                       <option value="{{ product.id }}">{{ product.product_name }} | {{ product.category_name.category_name }} | {{ product.unit_price }}</option>
+                       <option value="{{ product.id }}">{{ product.product_name }} | {{ product.category_name.category_name }} | {{ product.unit_price }} | Stock {{ product.current_stock }}</option>
                     {% endfor %}
 
                 </select>

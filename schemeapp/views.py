@@ -103,11 +103,7 @@ def scheme_goods_pickup(request, customer_id):
 
         product = form.cleaned_data['product']
         quantity = form.cleaned_data['quantity']
-        total_received = StockReceipt.objects.filter(product=product).aggregate(total=Sum('quantity_received'))['total'] or 0
-        total_sold = SaleItem.objects.filter(product=product).aggregate(total=Sum("quantity"))["total"] or 0
-        available_stock = total_received - total_sold
-
-        if quantity > available_stock:
+        if quantity > product.current_stock:
             messages.error(request, "Not enough stock available")
             return render(request, "scheme_goods_pickup.html", {
                 "customer": customer,

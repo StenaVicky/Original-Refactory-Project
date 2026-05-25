@@ -20,6 +20,18 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
 
+    @property
+    def total_received(self):
+        return self.stockreceipt_set.aggregate(Sum('quantity_received'))['quantity_received__sum'] or 0
+
+    @property
+    def total_sold(self):
+        return self.saleitem_set.aggregate(Sum('quantity'))['quantity__sum'] or 0
+
+    @property
+    def current_stock(self):
+        return self.total_received - self.total_sold
+
 
 class Sales(models.Model):
     product_name = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)

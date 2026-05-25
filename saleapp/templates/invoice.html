@@ -29,6 +29,27 @@
                         </div>
                     </div>
 
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="border rounded-3 p-3 h-100">
+                                <p class="small text-uppercase text-muted mb-1">Distance</p>
+                                <strong>{{ sale.distance|floatformat:0 }} km</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded-3 p-3 h-100">
+                                <p class="small text-uppercase text-muted mb-1">Delivery Status</p>
+                                <strong>{{ sale.transport_note }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded-3 p-3 h-100">
+                                <p class="small text-uppercase text-muted mb-1">Transport Fee</p>
+                                <strong>UGX {{ sale.transport|floatformat:0 }}</strong>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="table-responsive mb-4">
                         <table class="table table-bordered table-sm">
                             <thead class="table-dark small">
@@ -37,7 +58,6 @@
                                     <th>Unit Price</th>
                                     <th>Quantity</th>
                                     <th>Line Total</th>
-                                    <th>Distance</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,7 +67,6 @@
                                     <td>UGX {{ item.unit_price|floatformat:0 }}</td>
                                     <td>{{ item.quantity }}</td>
                                     <td>UGX {{ item.line_total|floatformat:0 }}</td>
-                                    <td></td>
                                 </tr>
                                 {% empty %}
                                 <tr>
@@ -65,7 +84,9 @@
                         </div>
                         <div class="col-6">
                             <div class="border rounded-3 p-3 b text-end" style="background-color: #1a5f7a;">
-                                <p class="small text-uppercase text-muted mb-1">Total Amount</p>
+                                <p class="small mb-1 text-white-50">Subtotal: UGX {{ subtotal|floatformat:0 }}</p>
+                                <p class="small mb-2 text-white-50">Transport: UGX {{ sale.transport|floatformat:0 }}</p>
+                                <p class="small text-uppercase text-white-50 mb-1">Total Amount</p>
                                 <h4 class="mb-0">UGX {{ sale.total_amount|floatformat:0 }}</h4>
                             </div>
                         </div>

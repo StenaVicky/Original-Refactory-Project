@@ -134,7 +134,6 @@ def delete_product(request, product_id):
         return redirect('product_list')
     return render(request, "delete_product.html", {'product': product})
 
-@login_required
 def _parse_sale_items(request):
     product_ids = request.POST.getlist('product')
     quantities = request.POST.getlist('quantity')
@@ -160,16 +159,23 @@ def _parse_sale_items(request):
 
     return items
 
-def _validate_order_stock(items):
+def _available_stock(product, exclude_sale=None):
+    sold_items = SaleItem.objects.filter(product=product)
+    if exclude_sale:
+        sold_items = sold_items.exclude(sale=exclude_sale)
+
+    received = product.total_received
+    sold = sold_items.aggregate(Sum('quantity'))['quantity__sum'] or 0
+    return received - sold
+
+
+def _validate_order_stock(items, exclude_sale=None):
     quantities_by_product = {}
     for item in items:
         quantities_by_product[item['product']] = quantities_by_product.get(item['product'], 0) + item['quantity']
 
     for product, required_qty in quantities_by_product.items():
-        received = StockReceipt.objects.filter(product=product).aggregate(Sum('quantity_received'))['quantity_received__sum'] or 0
-        sold = SaleItem.objects.filter(product=product).aggregate(Sum('quantity'))['quantity__sum'] or 0
-        available = received - sold
-        if required_qty > available:
+        if required_qty > _available_stock(product, exclude_sale):
             raise ValueError("Not enough stock available for selected product")
 
 
@@ -239,7 +245,12 @@ def create_sale(request):
 def invoice(request, sale_id):
     sale = get_object_or_404(Sales, id=sale_id)
     items = sale.items.all()
-    return render(request, "invoice.html", {'sale': sale, 'items': items})
+    subtotal = sum(item.line_total for item in items)
+    return render(request, "invoice.html", {
+        'sale': sale,
+        'items': items,
+        'subtotal': subtotal,
+    })
 
 @login_required
 def edit_sale(request, sale_id):
@@ -271,7 +282,7 @@ def edit_sale(request, sale_id):
             })
 
         try:
-            _validate_order_stock(items)
+            _validate_order_stock(items, exclude_sale=sale)
         except ValueError as exc:
             messages.error(request, clean_message(exc))
             return render(request, "edit_sale.html", {

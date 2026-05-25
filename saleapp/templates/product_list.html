@@ -41,6 +41,7 @@
             <th>Category</th>
             <th>Cost Price</th>
             <th>Current Unit Price</th>
+            <th>Current Stock</th>
             <th>Description</th>
             <th>Actions</th>
         </tr>
@@ -52,6 +53,7 @@
             <td>{{ product.category_name.category_name }}</td>
             <td>{{ product.cost_price }}</td>
             <td>{{ product.unit_price }}</td>
+            <td>{{ product.current_stock }}</td>
             <td>{{ product.description|truncatechars:50 }}</td>
             <td>
                 <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm">
@@ -64,7 +66,7 @@
             </tr>
         {% empty %}
         <tr>
-            <td colspan="6" class="text-center text-danger">
+            <td colspan="7" class="text-center text-danger">
                 <i class="bi bi-search"></i> No products found matching "{{ search_query }}"
             </td>
             </tr>

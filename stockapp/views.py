@@ -81,15 +81,7 @@ def stock_report(request):
     report = []
 
     for product in products:
-        total_received = StockReceipt.objects.filter(
-            product=product
-        ).aggregate(total=Sum("quantity_received"))["total"] or 0
-
-        total_sold = SaleItem.objects.filter(
-            product=product
-        ).aggregate(total=Sum("quantity"))["total"] or 0
-
-        current_stock = total_received - total_sold
+        current_stock = product.current_stock
 
         if current_stock <= 10:
             status = "Low Stock"
@@ -100,8 +92,8 @@ def stock_report(request):
 
         report.append({
             "product": product,
-            "total_received": total_received,
-            "total_sold": total_sold,
+            "total_received": product.total_received,
+            "total_sold": product.total_sold,
             "current_stock": current_stock,
             "status": status,
         })
@@ -128,15 +120,7 @@ def export_stock_report_excel(request):
     ])
 
     for product in products:
-        total_received = StockReceipt.objects.filter(
-            product=product
-        ).aggregate(total=Sum("quantity_received"))["total"] or 0
-
-        total_sold = SaleItem.objects.filter(
-            product=product
-        ).aggregate(total=Sum("quantity"))["total"] or 0
-
-        current_stock = total_received - total_sold
+        current_stock = product.current_stock
 
         if current_stock <= 5:
             status = "Low Stock"
@@ -148,8 +132,8 @@ def export_stock_report_excel(request):
         worksheet.append([
             product.product_name,
             product.category_name.category_name,
-            total_received,
-            total_sold,
+            product.total_received,
+            product.total_sold,
             current_stock,
             status
         ])

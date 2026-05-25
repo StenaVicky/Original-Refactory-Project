@@ -15,9 +15,10 @@
 <table class="table table-bordered table-striped shadow-sm">
     <thead class="table-dark">
         <tr>
-            <th>Poduct</th>
+            <th>Product</th>
             <th>Supplier</th>
-            <th>Quantity</th>
+            <th>Quantity Received</th>
+            <th>Current Stock</th>
             <th> Unit Cost</th>
             <th>selling_price</th>
             <th>Total Due</th>
@@ -33,6 +34,7 @@
             <td>{{ receipt.product.product_name}}</td>
             <td>{{ receipt.supplier_name}}</td>
             <td>{{ receipt.quantity_received}}</td>
+            <td>{{ receipt.product.current_stock }}</td>
             <td>{{ receipt.unit_cost}}</td>
             <td>{{receipt.selling_price}}</td>
             <td>{{receipt.total_amount}}</td>
@@ -53,7 +55,7 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="7" class="text_centre">No stock Found</td>
+            <td colspan="10" class="text_centre">No stock Found</td>
 
         </tr>
         {% endfor %}
