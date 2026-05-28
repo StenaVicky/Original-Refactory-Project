@@ -17,7 +17,7 @@ class PlainFormMixin:
                 field.widget.attrs.pop(attr, None)
 
 
-class SchemeCustomerForm(PlainFormMixin, forms.ModelForm):
+class SchemeCustomerForm(forms.ModelForm):
     class Meta:
         model = SchemeCustomer
         fields = '__all__'

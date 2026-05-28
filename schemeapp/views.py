@@ -1,17 +1,19 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import SchemeCustomer, SchemePayment, SchemeGoodsPickup
 from saleapp.models import Product, Sales, SaleItem
-from django.db.models import Q, Sum
-from stockapp.models import StockReceipt
+from django.db.models import Q
+# from stockapp.models import StockReceipt
 from django.contrib import messages
 # from django.contrib.auth.decorators import login_required
 from nyondoproject.form_messages import clean_form_errors
 from .forms import SchemeCustomerForm, SchemePaymentForm, SchemeGoodsPickupForm
+from django.contrib.auth.decorators import login_required
+
 
 
 
 # Create your views here.
-# @login_required
+@login_required
 def scheme_customer_list(request):
     search_query = request.GET.get('search', '').strip()
     customers = SchemeCustomer.objects.all().order_by("-date_registered")
@@ -29,8 +31,8 @@ def scheme_customer_list(request):
         'search_query': search_query
     })
 
-# @login_required
 
+@login_required
 def register_scheme_customer(request):
     if request.method == 'POST':
         form = SchemeCustomerForm(request.POST)
@@ -44,7 +46,7 @@ def register_scheme_customer(request):
     
     return render(request, 'register_scheme_customer.html', {'form': form})
 
-# @login_required
+@login_required
 def record_scheme_payment(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     if request.method == 'POST':
@@ -56,12 +58,12 @@ def record_scheme_payment(request, customer_id):
         messages.error(request, clean_form_errors(form))
     return render(request, "record_scheme_payment.html", {"customer": customer})
 
-# @login_required
+@login_required
 def temporary_receipt(request, payment_id):
     payment = get_object_or_404(SchemePayment,id=payment_id)
     return render(request,"temporary_receipt.html",{"payment":payment})
 
-# @login_required
+@login_required
 def customer_scheme_detail(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     payments = SchemePayment.objects.filter(customer=customer)
@@ -81,7 +83,7 @@ def customer_scheme_detail(request, customer_id):
         'balance': balance,
     })
 
-# @login_required
+@login_required
 def scheme_goods_pickup(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     products = Product.objects.filter(
@@ -139,6 +141,8 @@ def scheme_goods_pickup(request, customer_id):
          "customer": customer,
          "products": products
    })
+
+@login_required
 def delete_customer(request, customer_id):
     customer = get_object_or_404(SchemeCustomer, id=customer_id)
     if request.method == 'POST':
@@ -146,7 +150,7 @@ def delete_customer(request, customer_id):
         return redirect('scheme_customer_list')
     return render(request, 'delete_customer.html', {'customer': customer})
 
-# @login_required
+@login_required
 def customer_report(request):
     customers = SchemeCustomer.objects.all()
     

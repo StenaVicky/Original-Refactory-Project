@@ -2,75 +2,227 @@
 {% load humanize %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="card shadow-sm border-0" style="font-size: 0.9rem;">
-                <div class="card-header text-white py-3" style="background-color: #1a5f7a;">
-                    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
-                        <div>
-                            <h4 class="mb-1 fw-semibold">Sales Records</h4>
-                            <p class="mb-0 small text-white-75">Sales recorded at NYONDO Hardware</p>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <a href="{% url 'create_sale' %}" class="btn btn-success btn-sm px-3">Register Sale</a>
-                            <a href="{% url 'sales_report' %}" class="btn btn-success btn-sm px-3">Sales Report</a>
-                            
-                        </div>
-                    </div>
-                </div>
-                  <form method="GET" action="" class="d-flex mb-3">
-    <input type="text" name="search" class="form-control me-2" 
-           placeholder="Search..." value="{{ search_query }}">
-    <button type="submit" class="btn" style="background-color: #e86a2c; color: white;">
-        <i class="bi bi-search"></i> Search
-    </button>
-</form>
+<style>
+    .sales-page {
+        max-width: 1180px;
+        margin: 0 auto;
+    }
 
-                <div class="card-body p-3">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm mb-0 shadow-sm">
-                            <thead class="table-dark small">
-                                <tr>
-                                    <th>Invoice</th>
-                                    <th>Customer</th>
-                                    <th>Products</th>
-                                    <th>Qty</th>
-                                    <th>Total</th>
-                                    <th>Sale Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="small">
-                                {% for sale in sales %}
-                                <tr>
-                                    <td>INV-{{ sale.id }}</td>
-                                    <td>{{ sale.customer_name|default:"Walk-in" }}</td>
-                                    <td>{{ sale.item_summary }}</td>
-                                    <td>{{ sale.quantity }}</td>
-                                    <td>{{ sale.total_amount|floatformat:2 }}</td>
-                                    <td>{{ sale.sale_date|date:"j F Y, H:i" }}</td>
-                                    <td>
-                                        <a href="{% url 'invoice' sale.id %}" class="btn btn-dark btn-sm">Invoice</a>
-                                        <a href="{% url 'edit_sale' sale.id %}" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i></a>
-                                        <a href="{% url 'delete_sale' sale.id %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="7" class="text-center small">No sales recorded yet.</td>
-                                </tr>
-                                {% endfor %}
-                                <tr class="table-dark small">
-                                    <td colspan="4" class="text-center align-middle"><strong>Total Sales</strong></td>
-                                    <td><strong>{{ total_sales_value|floatformat:2 }}</strong></td>
-                                    <td colspan="2"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    .sales-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        padding: 18px 20px;
+        border-radius: 8px;
+        background-color: #1a5f7a;
+        color: #ffffff;
+    }
+
+    .sales-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    .sales-header p,
+    .sales-summary p {
+        margin: 0;
+    }
+
+    .sales-actions,
+    .sales-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .sales-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+    }
+
+    .summary-box {
+        padding: 14px 16px;
+        border: 1px solid #1a5f7a;
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    .summary-label {
+        color: #000000;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .summary-value {
+        margin-top: 4px;
+        color: #1a5f7a;
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .sales-toolbar {
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .sales-search {
+        display: flex;
+        gap: 8px;
+        flex: 1 1 360px;
+        max-width: 620px;
+    }
+
+    .sales-search input {
+        min-height: 38px;
+    }
+
+    .table-shell {
+        overflow: hidden;
+        border: 1px solid #1a5f7a;
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    .sales-table {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .sales-table thead th {
+        background-color: #1a5f7a;
+        color: #ffffff;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        vertical-align: middle;
+    }
+
+    .sales-table td {
+        vertical-align: middle;
+    }
+
+    .products-cell {
+        min-width: 220px;
+        white-space: normal;
+    }
+
+    .amount-cell {
+        color: #1a5f7a;
+        font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+        .sales-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .sales-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .sales-search {
+            max-width: none;
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="sales-page">
+    <section class="sales-header">
+        <div>
+            <h3>Sales Records</h3>
+            <p class="small text-white-50">Track invoices, customers, products, and daily sales totals.</p>
+        </div>
+        <div class="sales-actions">
+            <a href="{% url 'create_sale' %}" class="btn btn-primary btn-sm px-3">
+                <i class="bi bi-grid"></i> Register Sale
+            </a>
+            <a href="{% url 'sales_report' %}" class="btn btn-secondary btn-sm px-3">
+                <i class="bi bi-grid"></i> Sales Report
+            </a>
+        </div>
+    </section>
+
+    <section class="sales-summary">
+        <div class="summary-box">
+            <p class="summary-label">Total Sales Value</p>
+            <div class="summary-value">UGX {{ total_sales_value|floatformat:0|intcomma }}</div>
+        </div>
+        <div class="summary-box">
+            <p class="summary-label">Displayed Records</p>
+            <div class="summary-value">{{ sales|length|intcomma }}</div>
+        </div>
+    </section>
+
+    <div class="sales-toolbar">
+        <form method="GET" action="" class="sales-search">
+        {% csrf_token %}
+            <input type="text" name="search" class="form-control form-control-sm"
+                   placeholder="Search invoice, customer, or product" value="{{ search_query }}">
+            <button type="submit" class="btn btn-sm" style="background-color: #e86a2c; color: white;">
+                <i class="bi bi-grid"></i> Search
+            </button>
+            {% if search_query %}
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="table-shell">
+        <div class="table-responsive">
+            <table class="table table-hover table-sm sales-table">
+                <thead>
+                    <tr>
+                        <th>Invoice</th>
+                        <th>Customer</th>
+                        <th>Products</th>
+                        <th class="text-end">Qty</th>
+                        <th class="text-end">Total</th>
+                        <th>Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td class="fw-semibold">INV-{{ sale.id }}</td>
+                        <td>{{ sale.customer_name|default:"Walk-in" }}</td>
+                        <td class="products-cell">{{ sale.item_summary }}</td>
+                        <td class="text-end">{{ sale.quantity }}</td>
+                        <td class="text-end amount-cell">UGX {{ sale.total_amount|floatformat:0|intcomma }}</td>
+                        <td>{{ sale.sale_date|date:"j F Y, H:i" }}</td>
+                        <td class="text-end">
+                            <a href="{% url 'invoice' sale.id %}" class="btn btn-dark btn-sm">Invoice</a>
+                            <a href="{% url 'edit_sale' sale.id %}" class="btn btn-outline-primary btn-sm" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'delete_sale' sale.id %}" class="btn btn-outline-danger btn-sm" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            No sales records found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-end">Total Sales</th>
+                        <th class="text-end">UGX {{ total_sales_value|floatformat:0|intcomma }}</th>
+                        <th colspan="2"></th>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
 </div>

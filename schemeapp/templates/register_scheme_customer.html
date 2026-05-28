@@ -10,46 +10,70 @@
                         <h3 class="mb-1">Register Scheme Customer</h3>
                         <p class="mb-0 text-white-75">Add a new customer to the credit scheme.</p>
                     </div>
-                    <i class="bi bi-credit-card fs-2"></i>
+                    <i class="bi bi-grid fs-2"></i>
                 </div>
             </div>
             <div class="card-body">
+                
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Please fix the following errors:</strong>
+                        <ul>
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <li>{{ field }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
                 <form method="POST" class="row g-3">
                     {% csrf_token %}
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
-                        {{ form.full_name }}
+                        <label class="form-label fw-semibold">Full Name <span class="text-danger"></span></label>
+                        <input type="text" name="full_name" class="form-control" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">NIN Number <span class="text-danger">*</span></label>
-                        {{ form.nin_number }}
+                        <label class="form-label fw-semibold">NIN Number <span class="text-danger"></span></label>
+                        <input type="text" name="nin_number" class="form-control" required>
+                        <small class="text-muted">Must be exactly 14 alphanumeric characters</small>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
-                        {{ form.phone_number }}
+                        <label class="form-label fw-semibold">Phone Number <span class="text-danger"></span></label>
+                        <input type="text" name="phone_number" class="form-control" required>
+                        <small class="text-muted">Format: 07XXXXXXXX or +256XXXXXXXXX</small>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Occupation</label>
-                        {{ form.occupation }}
+                        <label class="form-label fw-semibold">Occupation <span class="text-danger"></span></label>
+                        <input type="text" name="occupation" class="form-control" required>
                     </div>
 
-                    <div class="col-9">
-                        <label class="form-label fw-semibold">Address <span class="text-danger">*</span></label>
-                        {{ form.address }}
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Employer Name</label>
-                        {{ form.employer_name }}
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Address <span class="text-danger"></span></label>
+                        <textarea name="address" class="form-control" rows="2" required></textarea>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Payment Plan <span class="text-danger">*</span></label>
-                        {{ form.payment_plan }}
+                        <label class="form-label fw-semibold">Employer Name <span class="text-danger"></span></label>
+                        <input type="text" name="employer_name" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Payment Plan</label>
+                        <input type="text" name="payment_plan" class="form-control">
+                        <small class="text-muted">Optional</small>
+                    </div>
+
+                    
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Date Registered <span class="text-danger"></span></label>
+                        <input type="date" name="date_registered" class="form-control" value="{% now 'Y-m-d' %}" required>
+                        <small class="text-muted">Default is today's date</small>
                     </div>
 
                     <div class="col-12 d-flex flex-column flex-sm-row gap-2 mt-2">

@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.contrib import messages
 
 
 
@@ -11,10 +12,13 @@ def login_view(request):
         password = request.POST.get("password")
         if username == "admin" and password == "admin123":
             return redirect("dashboard")
+        else:
+            # Add error message for invalid credentials
+            messages.error(request, 'Invalid username or password')
+            return redirect("login")
     return render(request, "login.html")
 
 def logout(request):
-    
     return render(request, 'logout.html')
 
 

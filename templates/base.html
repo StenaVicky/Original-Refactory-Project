@@ -10,6 +10,119 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
+        :root {
+            --brand-blue: #1a5f7a;
+            --brand-orange: #e86a2c;
+            --brand-black: #000000;
+            --message-red: #dc3545;
+            --message-green: #198754;
+        }
+
+        body {
+            color: var(--brand-black);
+        }
+
+        .card-header,
+        .table-dark th,
+        .table-dark td {
+            background-color: var(--brand-blue) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-primary,
+        .btn-success,
+        .btn-info,
+        .btn-dark {
+            border-color: var(--brand-blue) !important;
+            background-color: var(--brand-blue) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-secondary,
+        .btn-warning,
+        .btn-light {
+            border-color: var(--brand-orange) !important;
+            background-color: var(--brand-orange) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-danger {
+            border-color: var(--brand-black) !important;
+            background-color: var(--brand-black) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-outline-primary,
+        .btn-outline-secondary,
+        .btn-outline-danger,
+        .btn-outline-dark {
+            border-color: var(--brand-blue) !important;
+            color: var(--brand-blue) !important;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-secondary:hover,
+        .btn-outline-danger:hover,
+        .btn-outline-dark:hover {
+            background-color: var(--brand-blue) !important;
+            color: #ffffff !important;
+        }
+
+        .badge.bg-primary,
+        .badge.bg-success,
+        .badge.bg-secondary,
+        .badge.bg-info,
+        .badge.bg-warning {
+            background-color: var(--brand-orange) !important;
+            color: #ffffff !important;
+        }
+
+        .badge.bg-danger,
+        .badge.bg-dark {
+            background-color: var(--brand-black) !important;
+            color: #ffffff !important;
+        }
+
+        .text-primary,
+        .text-info,
+        .text-secondary,
+        .text-muted {
+            color: var(--brand-black) !important;
+        }
+
+        .text-danger {
+            color: var(--brand-orange) !important;
+        }
+
+        .text-success {
+            color: var(--brand-blue) !important;
+        }
+
+        .alert-danger {
+            border-color: var(--message-red) !important;
+            background-color: var(--message-red) !important;
+            color: #ffffff !important;
+        }
+
+        .alert-success {
+            border-color: var(--message-green) !important;
+            background-color: var(--message-green) !important;
+            color: #ffffff !important;
+        }
+
+        .alert-warning,
+        .alert-info,
+        .alert-primary,
+        .alert-secondary {
+            border-color: var(--brand-orange) !important;
+            background-color: var(--brand-orange) !important;
+            color: #ffffff !important;
+        }
+
+        .bi {
+            color: currentColor;
+        }
+
         .message-popup {
             position: fixed;
             top: 86px;
@@ -20,7 +133,7 @@
 
         .message-popup .alert {
             border-radius: 8px;
-            box-shadow: 0 14px 35px rgba(18, 63, 82, 0.18);
+            box-shadow: none;
             line-height: 1.45;
             overflow-wrap: anywhere;
             word-break: normal;
@@ -58,7 +171,7 @@
         .site-footer hr {
             max-width: 280px;
             margin: 8px auto;
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: #ffffff;
         }
     </style>
 </head>

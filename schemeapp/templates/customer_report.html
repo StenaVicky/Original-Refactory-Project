@@ -6,30 +6,30 @@
 {% block content %}
 <div class="container">
 
-    <h3 class="mb-3" style="color: #1a5f7a;">📋 Customer Report</h3>
+    <h3 class="mb-3" style="color: #1a5f7a;"><i class="bi bi-grid"></i> Customer Report</h3>
 
     
     <div class="row mb-3">
         <div class="col-md-3">
-            <div class="alert alert-primary text-center" style="background-color: #8fcbe2;">
+            <div class="alert alert-primary text-center" style="background-color: #1a5f7a;">
                 Total Customers<br>
                 <strong style="font-size: 20px;">{{ total_customers|default:0 }}</strong>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="alert alert-success text-center" style="background-color: #d48056;">
+            <div class="alert text-center" style="background-color: #1a5f7a; color: white;">
                 Total Deposits<br>
                 <strong>UGX {{ total_deposits|floatformat:0|intcomma }}</strong>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="alert alert-secondary text-center" style="background-color: #8fcbe2;">
+            <div class="alert alert-secondary text-center" style="background-color: #1a5f7a;">
                 Total Withdrawn<br>
                 <strong>UGX {{ total_withdrawn|floatformat:0|intcomma }}</strong>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="alert alert-info text-center" style="background-color: #d48056;">
+            <div class="alert text-center" style="background-color: #1a5f7a; color: white;">
                 Total Balance<br>
                 <strong>UGX {{ total_balance|floatformat:0|intcomma }}</strong>
             </div>

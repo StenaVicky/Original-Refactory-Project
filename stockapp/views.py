@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum
-from saleapp.models import Product, SaleItem
+from saleapp.models import Product
 from .models import StockReceipt
 from django.http import HttpResponse
 from openpyxl import Workbook
 from django.contrib.auth.decorators import login_required
 from nyondoproject.form_messages import clean_form_errors
 from .forms import StockReceiptForm
+from users.decorators import stock_manager_required
+from users.decorators import admin_required
 
 
 
@@ -62,7 +64,7 @@ def edit_stock_receipt(request, receipt_id):
     })
 
 @login_required
-# @admin_required
+@admin_required
 def delete_stock_receipt(request, receipt_id):
     receipt = get_object_or_404(StockReceipt, id=receipt_id)
 

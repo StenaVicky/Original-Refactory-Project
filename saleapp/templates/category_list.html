@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
-    <div class="card flex-fill shadow-sm border-0" style="background: linear-gradient(135deg, #1a5f7a 0%, #0d3d4f 100%); color: white;">
+    <div class="card flex-fill shadow-sm border-0" style="background-color: #1a5f7a; color: white;">
         <div class="card-body">
             <div class="d-flex align-items-center gap-3">
-                <span class="fs-2">📦</span>
+                <span class="fs-2"><i class="bi bi-grid"></i></span>
                 <div>
                     <h3 class="mb-1">Category Management</h3>
                     <p class="mb-0 text-white-75">View and manage product categories at NYONDO Hardware.</p>
@@ -15,13 +15,14 @@
     </div>
     
 
-    <a href="{% url 'create_category' %}" class="btn btn-success btn-lg align-self-center">Add Category</a>
+    <a href="{% url 'create_category' %}" class="btn btn-primary btn-lg align-self-center">Add Category</a>
 </div>
   <form method="GET" action="" class="d-flex mb-3">
+  {% csrf_token %}
     <input type="text" name="search" class="form-control me-2" 
            placeholder="Search..." value="{{ search_query }}">
     <button type="submit" class="btn" style="background-color: #e86a2c; color: white;">
-        <i class="bi bi-search"></i> Search
+        <i class="bi bi-grid"></i> Search
     </button>
 </form>
 
@@ -43,7 +44,7 @@
                         <td>{{ category.slug }}</td>
                         <td class="text-end pe-4">
                             <a href="{% url 'delete_category' category.id %}" class="btn btn-outline-danger btn-sm">
-                                <i class="bi bi-trash"></i> Delete
+                                <i class="bi bi-grid"></i> Delete
                             </a>
                         </td>
                     </tr>

@@ -13,32 +13,10 @@
 
         body{
             background-color:#f8f9fa;
-        
         }
 
         .top-navbar{
             background-color:#1a5f7a;
-        }
-
-        .back-arrow-btn {
-            width: 42px;
-            height: 42px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.45);
-            border-radius: 8px;
-            color: white;
-            background-color: #e86a2a;
-            font-size: 1.25rem;
-            text-decoration: none;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-
-        .back-arrow-btn:hover {
-            color: white;
-            border-color: rgba(255, 255, 255, 0.75);
-            background-color: rgba(255, 255, 255, 0.18);
         }
 
         .auth-container{
@@ -49,30 +27,6 @@
             padding-top:80px;
         }
 
-        .message-popup {
-            position: fixed;
-            top: 86px;
-            right: 24px;
-            z-index: 1080;
-            width: min(420px, calc(100vw - 32px));
-        }
-
-        .message-popup .alert {
-            border-radius: 8px;
-            box-shadow: 0 14px 35px rgba(18, 63, 82, 0.18);
-            line-height: 1.45;
-            overflow-wrap: anywhere;
-            word-break: normal;
-        }
-
-        @media (max-width: 576px) {
-            .message-popup {
-                left: 16px;
-                right: 16px;
-                width: auto;
-            }
-        }
-
     </style>
 </head>
 
@@ -81,29 +35,18 @@
     <nav class="navbar top-navbar navbar-dark fixed-top">
         <div class="container-fluid">
 
-            <div class="d-flex align-items-center">
-                <button
-                    type="button"
-                    class="back-arrow-btn me-3"
-                    onclick="goBackToPreviousPage()"
-                    aria-label="Go back"
-                    title="Go back">
-                    &larr;
-                </button>
+            <!-- Logo -->
+            <a href="{% url 'home' %}" class="navbar-brand fw-bold">
 
-                
-                <a href="{% url 'home' %}" class="navbar-brand fw-bold">
+                <img src="{% static 'stenalogo.png' %}"
+                     alt="logo"
+                     width="60"
+                     height="60"
+                     class="rounded-circle me-2">
 
-                    <img src="{% static 'stenalogo.png' %}"
-                         alt="logo"
-                         width="60"
-                         height="60"
-                         class="rounded-circle me-2">
+                Nyondo Hardware System
 
-                    Nyondo Hardware System
-
-                </a>
-            </div>
+            </a>
 
             <!-- Auth Buttons -->
             <div class="d-flex">
@@ -122,36 +65,11 @@
 
         </div>
     </nav>
-    
 
     <div class="auth-container">
-        {% if messages %}
-            <div class="message-popup">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
         {% block content %}
-        
         {% endblock %}
-        
     </div>
-
-    <script>
-        function goBackToPreviousPage() {
-            if (window.history.length > 1) {
-                window.history.back();
-                return;
-            }
-
-            window.location.href = "{% url 'home' %}";
-        }
-    </script>
     
 </body>
 </html>

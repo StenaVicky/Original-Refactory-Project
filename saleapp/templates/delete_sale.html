@@ -8,12 +8,12 @@
             <div class="card border-danger shadow-sm">
                 <div class="card-header bg-danger text-white d-flex align-items-center justify-content-between">
                     <div>
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <i class="bi bi-grid me-2"></i>
                         <span class="fs-5 fw-semibold">Confirm Delete Sale</span>
                     </div>
                 </div>
                 <div class="card-body">
-                    <p class="mb-3">You are about to remove the following sale record permanently. This action cannot be undone.</p>
+                    <p class="mb-3">Are you sure you need to delete this sale. This action cannot be undone.</p>
 
                     <ul class="list-group mb-4">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -33,7 +33,7 @@
                     <form method="POST" class="d-flex gap-2 flex-wrap">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-lg">
-                            <i class="bi bi-trash-fill me-1"></i> Delete Sale
+                            <i class="bi bi-grid me-1"></i> Delete Sale
                         </button>
                         <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">Cancel</a>
                     </form>

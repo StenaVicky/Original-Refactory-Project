@@ -1,10 +1,10 @@
 {% extends 'base.html'%}
 
 {% block content %}
-<h1 class="mb-3">Stock Report</h1>
-<a href="{% url 'export_stock_report_excel' %}" class="bn btn-secondary mb-2">Export Excel</a>
+<h1 class="mb-3"><i class="bi bi-grid"></i> Stock Report</h1>
+<a href="{% url 'export_stock_report_excel' %}" class="btn btn-secondary mb-2">Export Excel</a>
 <table class="table table-bordered table-stripes shadow-sm">
-    <thead class="table-blue">
+    <thead class="table-dark">
         <tr>
             <th>Product</th>
             <th>Total Received</th>

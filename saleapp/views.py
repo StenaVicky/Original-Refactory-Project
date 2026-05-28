@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from saleapp.models import Category, Product, Sales, SaleItem
-from stockapp.models import StockReceipt
 from django.db.models import Q, Sum
 from django.http import HttpResponse
 from openpyxl import Workbook
@@ -11,7 +10,9 @@ from schemeapp.models import SchemeCustomer, SchemePayment
 from django.contrib.auth.decorators import login_required
 from nyondoproject.form_messages import clean_form_errors, clean_message
 from .forms import CategoryForm, ProductForm, SaleForm
-@login_required
+
+
+# @login_required
 def home(request):
     search_query = request.GET.get('search', '').strip()
     all_sales = Sales.objects.all().order_by("-sale_date")
@@ -61,8 +62,8 @@ def create_category(request):
         messages.error(request, clean_form_errors(form))
     return render(request, "create_category.html")
 
+
 @login_required
-# @admin_required
 def delete_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     if request.method == "POST":
@@ -124,8 +125,8 @@ def edit_product(request, product_id):
         'categories': categories
     })
 
+
 @login_required
-# @admin_required
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     if request.method == "POST":
@@ -133,6 +134,7 @@ def delete_product(request, product_id):
         messages.success(request, "Product deleted successfully.")
         return redirect('product_list')
     return render(request, "delete_product.html", {'product': product})
+
 
 def _parse_sale_items(request):
     product_ids = request.POST.getlist('product')
@@ -158,6 +160,7 @@ def _parse_sale_items(request):
         raise ValueError("Please add at least one product to the sale")
 
     return items
+
 
 def _available_stock(product, exclude_sale=None):
     sold_items = SaleItem.objects.filter(product=product)
@@ -189,7 +192,7 @@ def _calculate_order_total(items, distance):
         transport_note = "Standard delivery fee"
     return subtotal + transport_fee, transport_fee, transport_note
 
-
+@login_required
 def create_sale(request):
     products = Product.objects.all()
 
@@ -203,22 +206,22 @@ def create_sale(request):
         distance = form.cleaned_data['distance']
 
         try:
-            items = _parse_sale_items(request)
+            sale_items = _parse_sale_items(request)
         except ValueError as exc:
             messages.error(request, clean_message(exc))
             return render(request, "create_sale.html", {'products': products})
 
         try:
-            _validate_order_stock(items)
+            _validate_order_stock(sale_items)
         except ValueError as exc:
             messages.error(request, clean_message(exc))
             return render(request, "create_sale.html", {'products': products})
 
-        total_amount, transport_fee, transport_note = _calculate_order_total(items, distance)
-        total_quantity = sum(item['quantity'] for item in items)
+        total_amount, transport_fee, transport_note = _calculate_order_total(sale_items, distance)
+        total_quantity = sum(item['quantity'] for item in sale_items)
 
         sale = Sales.objects.create(
-            product_name=items[0]['product'],
+            product_name=sale_items[0]['product'],
             customer_name=customer_name or None,
             quantity=total_quantity,
             distance=distance,
@@ -227,7 +230,7 @@ def create_sale(request):
             total_amount=total_amount
         )
 
-        for item in items:
+        for item in sale_items:
             SaleItem.objects.create(
                 sale=sale,
                 product=item['product'],
@@ -322,8 +325,8 @@ def edit_sale(request, sale_id):
         'items': existing_items
     })
 
+
 @login_required
-# @admin_required
 def delete_sale(request, sale_id):
     sale = get_object_or_404(Sales, id=sale_id)
     if request.method == "POST":
@@ -442,4 +445,5 @@ def dashboard(request):
     }
     
     return render(request, 'dashboard.html', context)
+    
 

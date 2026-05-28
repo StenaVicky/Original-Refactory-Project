@@ -15,7 +15,7 @@
     }
 
     body {
-        background-color: #f8f9fa;
+        background-color: #ffffff;
     }
 
     .top-navbar {
@@ -30,10 +30,10 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid rgba(255, 255, 255, 0.45);
+        border: 1px solid #ffffff;
         border-radius: 8px;
         color: white;
-        background-color: rgba(255, 255, 255, 0.08);
+        background-color: #1a5f7a;
         font-size: 1.25rem;
         text-decoration: none;
         transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -41,8 +41,8 @@
 
     .back-arrow-btn:hover {
         color: white;
-        border-color: rgba(255, 255, 255, 0.75);
-        background-color: rgba(255, 255, 255, 0.18);
+        border-color: #ffffff;
+        background-color: #e86a2c;
     }
 
     .sidebar {
@@ -126,9 +126,14 @@
                 <form action="{% url 'logout' %}" method="POST" class="m-0">
                     {% csrf_token %}
 
-                    <button type="submit" class="btn btn-danger btn-sm">
+                    <button type="submit" class="btn btn-dark btn-sm">
                         Logout
                     </button>
+                      <a href="{% url 'register' %}"
+                   class="btn btn-secondary btn-sm">
+                    Register
+                </a>
+
                 </form>
 
             {% else %}
@@ -139,7 +144,7 @@
                 </a>
 
                 <a href="{% url 'register' %}"
-                   class="btn btn-warning btn-sm">
+                   class="btn btn-secondary btn-sm">
                     Register
                 </a>
 
@@ -163,7 +168,7 @@
     </a>
 
     <a href="{% url 'category_list' %}">
-        <i class="bi bi-list"></i> Categories
+        <i class="bi bi-grip-horizontal"></i> Categories
     </a>
 
     <a href="{% url 'product_list' %}">
@@ -171,7 +176,7 @@
     </a>
 
     <a href="{% url 'stock_receipt_list' %}">
-        <i class="bi bi-truck"></i> Stock
+        <i class="bi bi-box-seam"></i> Stock
     </a>
 
     <a href="{% url 'scheme_customer_list' %}">
@@ -183,7 +188,7 @@
     </a>
 
     <a href="{% url 'customer_report' %}">
-        <i class="bi bi-people me-2"></i> Customer Report
+        <i class="bi bi-person me-2"></i> Customer Report
     </a>
 
 </div>
