@@ -156,39 +156,45 @@
 
 </nav>
 
-<!-- Sidebar -->
+<!sidebar>
 <div class="sidebar">
+{% if user.is_superuser %}
+        
+    {% endif %}
+      <a href="{% url 'home' %}">
+            <i class="bi bi-cart"></i> Sales
+             </a>
+    
 
-    <a href="{% url 'dashboard' %}">
-        <i class="bi bi-speedometer2"></i> Dashboard
-    </a>
+    {% if user.is_superuser %}
+            <a href="{% url 'dashboard' %}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
 
-    <a href="{% url 'home' %}">
-        <i class="bi bi-cart"></i> Sales
-    </a>
+            <a href="{% url 'category_list' %}">
+                <i class="bi bi-grip-horizontal"></i> Categories
+            </a>
 
-    <a href="{% url 'category_list' %}">
-        <i class="bi bi-grip-horizontal"></i> Categories
-    </a>
+            <a href="{% url 'product_list' %}">
+                <i class="bi bi-box"></i> Products
+            </a>
 
-    <a href="{% url 'product_list' %}">
-        <i class="bi bi-box"></i> Products
-    </a>
+            <a href="{% url 'stock_receipt_list' %}">
+                <i class="bi bi-box-seam"></i> Stock
+            </a>
 
-    <a href="{% url 'stock_receipt_list' %}">
-        <i class="bi bi-box-seam"></i> Stock
-    </a>
+            <a href="{% url 'scheme_customer_list' %}">
+                <i class="bi bi-percent"></i> Schemes
+            </a>
 
-    <a href="{% url 'scheme_customer_list' %}">
-        <i class="bi bi-percent"></i> Schemes
-    </a>
+            <a href="{% url 'supplier_report' %}">
+                <i class="bi bi-truck me-2"></i> Supplier Report
+            </a>
 
-    <a href="{% url 'supplier_report' %}">
-        <i class="bi bi-truck me-2"></i> Supplier Report
-    </a>
-
-    <a href="{% url 'customer_report' %}">
-        <i class="bi bi-person me-2"></i> Customer Report
-    </a>
+            <a href="{% url 'customer_report' %}">
+                <i class="bi bi-person me-2"></i> Customer Report
+            </a>
+         {% endif %}
+    
 
 </div>

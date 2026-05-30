@@ -4,51 +4,399 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nyondo Hardware System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body{background-color:#f8f9fa;}
-        .top-navbar{background-color:#1a5f7a;}
-        .back-arrow-btn{width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.45);border-radius:8px;color:white;background-color:#e86a2a;font-size:1.25rem;text-decoration:none;transition:background-color .2s ease,border-color .2s ease;}
-        .back-arrow-btn:hover{color:white;border-color:rgba(255,255,255,0.75);background-color:rgba(255,255,255,0.18);}
-        .auth-container{min-height:100vh;display:flex;justify-content:center;align-items:center;padding-top:80px;}
-        .error-message,.form-errors{color:#721c24;background-color:#f8d7da;border:1px solid #f5c6cb;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;}
-        .error-message::before{content:"⚠️";font-size:16px;}
-        .login-page{width:100%;min-height:calc(100vh - 120px);display:flex;align-items:center;justify-content:center;padding:32px 16px;background:radial-gradient(circle at top left,rgba(26,95,122,0.12),transparent 32%),linear-gradient(135deg,#f7fbfd 0%,#eef4f6 48%,#fff 100%);}
-        .login-shell{width:min(980px,100%);display:grid;grid-template-columns:1.05fr 0.95fr;overflow:hidden;border:1px solid rgba(26,95,122,0.12);border-radius:8px;background:#fff;box-shadow:0 22px 55px rgba(15,45,60,0.14);}
-        .login-image-panel{position:relative;min-height:560px;background:linear-gradient(145deg,#164f66,#24758f);overflow:hidden;}
-        .login-image-panel img{width:100%;height:100%;object-fit:cover;display:block;opacity:.92;}
-        .login-image-placeholder{position:absolute;bottom:24px;left:24px;right:24px;display:flex;align-items:end;padding:28px;border:1px solid rgba(255,255,255,0.25);border-radius:8px;color:#fff;background:linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.42)),repeating-linear-gradient(135deg,rgba(255,255,255,0.08) 0,rgba(255,255,255,0.08) 1px,transparent 1px,transparent 14px);}
-        .login-image-placeholder h1{margin:0 0 8px;font-size:2rem;font-weight:800;line-height:1.1;}
-        .login-image-placeholder p{margin:0;max-width:320px;color:rgba(255,255,255,0.86);}
-        .login-form-panel{display:flex;align-items:center;padding:44px;}
-        .login-card{width:100%;}
-        .login-card h2{color:#123f52;font-weight:800;}
-        .input-group-custom{position:relative;display:flex;align-items:center;}
-        .input-group-custom input{padding-left:44px!important;}
-        .field-icon{position:absolute;left:14px;color:#64748b;z-index:5;}
-        .toggle-password-btn{position:absolute;left:14px;background:none;border:none;padding:0;color:#64748b;cursor:pointer;z-index:6;}
-        .login-card input{width:100%;min-height:46px;border:1px solid #d9e4e8;border-radius:8px;padding:10px 13px;background-color:#fbfdfe;}
-        .login-card input:focus{border-color:#1a5f7a;box-shadow:0 0 0 4px rgba(26,95,122,0.13);}
-        .login-card .btn-primary{min-height:46px;border:0;border-radius:8px;background:#1a5f7a;font-weight:700;}
-        .login-card .btn-primary:hover{background:#154d63;}
-        @media (max-width:850px){.login-shell{grid-template-columns:1fr;}.login-image-panel{min-height:260px;}.login-form-panel{padding:30px 22px;}}
+        <style>
+        
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body { 
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
+.top-navbar { 
+    background: #1a5f7a;
+    width: 100%;
+}
+
+.back-arrow-btn {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 8px;
+    color: #fff;
+    background: #e86a2a;
+    font-size: 1.25rem;
+    text-decoration: none;
+}
+
+.back-arrow-btn:hover {
+    color: #fff;
+    border-color: rgba(255,255,255,0.75);
+    background: rgba(255,255,255,0.18);
+}
+
+
+.auth-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.login-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    background: radial-gradient(circle at top left, rgba(26,95,122,0.12), transparent 32%), 
+                linear-gradient(135deg, #f7fbfd 0%, #eef4f6 48%, #fff 100%);
+}
+
+
+.login-shell {
+    width: min(980px, 100%);
+    max-width: 980px;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    overflow: hidden;
+    border: 1px solid rgba(26,95,122,0.12);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 22px 55px rgba(15,45,60,0.14);
+}
+
+
+.login-image-panel {
+    position: relative;
+    min-height: 560px;
+    background: linear-gradient(145deg, #164f66, #24758f);
+    overflow: hidden;
+}
+
+.login-image-panel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: .92;
+}
+.login-image-placeholder {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
+    display: flex;
+    align-items: end;
+    padding: 28px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+}
+
+.login-image-placeholder h1 {
+    margin: 0 0 8px;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #e86a2c;
+}
+
+.login-image-placeholder p {
+    margin: 0;
+    max-width: 320px;
+    color: rgba(255,255,255,0.86);
+}
+
+
+.login-form-panel {
+    display: flex;
+    align-items: center;
+    padding: 44px;
+}
+
+.login-card { 
+    width: 100%; 
+}
+
+.login-card h2 { 
+    color: #123f52; 
+    font-weight: 800; 
+    margin-bottom: 0.5rem;
+}
+
+
+.input-group-custom {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-group-custom input { 
+    padding-left: 44px !important; 
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid #d9e4e8;
+    border-radius: 8px;
+    padding: 10px 13px;
+    background: #fbfdfe;
+    transition: all 0.2s ease;
+}
+
+.field-icon {
+    position: absolute;
+    left: 14px;
+    color: #64748b;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: #64748b;
+    cursor: pointer;
+    z-index: 6;
+}
+
+.login-card input:focus {
+    border-color: #1a5f7a;
+    box-shadow: 0 0 0 4px rgba(26,95,122,0.13);
+    outline: none;
+}
+
+
+.login-card .btn-primary {
+    min-height: 46px;
+    border: 0;
+    border-radius: 8px;
+    background: #e86a2c;
+    font-weight: 700;
+    color: white;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.login-card .btn-primary:hover { 
+    background: #154d63; 
+    cursor: pointer;
+}
+
+
+.error-message, .form-errors {
+    color: #721c24;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.error-message::before { 
+    content: "⚠️"; 
+    font-size: 16px; 
+}
+
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.field-validation {
+    font-size: 0.75rem;
+    margin-top: 6px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #dc3545;
+    background: #fff5f5;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border-left: 3px solid #dc3545;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.field-validation::before {
+    content: "⚠️";
+    font-size: 0.7rem;
+}
+
+.field-validation.success {
+    color: #0f6b3a;
+    background: #e8f5ef;
+    border-left-color: #2e7d32;
+}
+
+.field-validation.success::before {
+    content: "✓";
+}
+
+.input-group-custom input.error-input {
+    border-color: #dc3545 !important;
+    background-color: #fff8f8;
+}
+
+.input-group-custom input.valid-input {
+    border-color: #2e7d32 !important;
+    background-color: #f8fff9;
+}
+
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.field-validation {
+    animation: fadeInUp 0.2s ease;
+}
+
+
+@media (max-width: 850px) {
+    .login-shell { 
+        grid-template-columns: 1fr;
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .login-image-panel { 
+        min-height: 260px; 
+    }
+    
+    .login-form-panel { 
+        padding: 30px 22px; 
+    }
+    
+    .login-image-placeholder {
+        padding: 16px;
+    }
+    
+    .login-image-placeholder h1 {
+        font-size: 1.5rem;
+    }
+    
+    .login-image-placeholder p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-form-panel {
+        padding: 20px 16px;
+    }
+    
+    .login-card h2 {
+        font-size: 1.5rem;
+    }
+    
+    .login-page {
+        padding: 10px;
+    }
+}
+
+
+.text-muted { 
+    color: #6c757d !important; 
+}
+
+.mb-2 { 
+    margin-bottom: 0.5rem; 
+}
+
+.mb-3 { 
+    margin-bottom: 1rem; 
+}
+
+.mb-4 { 
+    margin-bottom: 1.5rem; 
+}
+
+.mt-3 { 
+    margin-top: 1rem; 
+}
+
+.w-100 { 
+    width: 100%; 
+}
+
+.form-label { 
+    margin-bottom: 0.5rem; 
+    font-weight: 500; 
+    display: inline-block; 
+    color: #1e4a62; 
+}
+
+hr { 
+    margin-top: 1.5rem; 
+    margin-bottom: 0;
+    border: 0;
+    border-top: 1px solid #e2eef2; 
+}
+
+.text-center {
+    text-align: center;
+}
+
+.small {
+    font-size: 0.8rem;
+}
+
+
+button.toggle-password-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(232,106,44,0.4);
+    border-radius: 50%;
+}
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
     </style>
 </head>
 <body>
-    <nav class="navbar top-navbar navbar-dark fixed-top">
-        <div class="container-fluid">
-            <div class="d-flex align-items-center">
-                <button type="button" class="back-arrow-btn me-3" onclick="history.back()" aria-label="Go back">&larr;</button>
-                <a href="/saleapp/" class="navbar-brand fw-bold">
-                    <img src="/static/stenalogo.png" alt="logo" width="60" height="60" class="rounded-circle me-2">
-                    Nyondo Hardware System
-                </a>
-            </div>
-            <div class="d-flex">
-                <a href="/login/" class="btn btn-outline-light me-2">Login</a>
-            </div>
-        </div>
-    </nav>
+   
     <div class="auth-container">
         <div class="login-page">
             <div class="login-shell">
@@ -66,7 +414,6 @@
                         <h2 class="mb-2">Login</h2>
                         <p class="text-muted mb-4">Enter your account details to continue.</p>
                         {% if form.errors %}
-                            <div class="form-errors">Invalid username or password. Please try again.</div>
                         {% endif %}
                         {% if messages %}
                             {% for message in messages %}
@@ -97,8 +444,6 @@
             </div>
         </div>
     </div>
-    <script>
-        document.getElementById('togglePassword')?.addEventListener('click',function(){let p=document.getElementById('id_password');p.type=p.type==='password'?'text':'password';});
-    </script>
+    <script>document.getElementById('togglePassword')?.addEventListener('click',function(){let p=document.getElementById('id_password');p.type=p.type==='password'?'text':'password';});</script>
 </body>
 </html>

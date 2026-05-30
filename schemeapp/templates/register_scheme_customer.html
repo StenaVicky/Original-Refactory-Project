@@ -28,52 +28,75 @@
                     </div>
                 {% endif %}
 
-                <form method="POST" class="row g-3">
+                <form method="POST" class="row g-3" novalidate>
                     {% csrf_token %}
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Full Name <span class="text-danger"></span></label>
-                        <input type="text" name="full_name" class="form-control" required>
+                        <input type="text" name="full_name" class="form-control">
+                        {% if form.full_name.errors %}
+                            <small class="text-danger">{{ form.full_name.errors.0 }}</small>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">NIN Number <span class="text-danger"></span></label>
-                        <input type="text" name="nin_number" class="form-control" required>
+                        <input type="text" name="nin_number" class="form-control">
                         <small class="text-muted">Must be exactly 14 alphanumeric characters</small>
+                        {% if form.nin_number.errors %}
+                            <small class="text-danger">{{ form.nin_number.errors.0 }}</small>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Phone Number <span class="text-danger"></span></label>
-                        <input type="text" name="phone_number" class="form-control" required>
+                        <input type="text" name="phone_number" class="form-control">
                         <small class="text-muted">Format: 07XXXXXXXX or +256XXXXXXXXX</small>
+                        {% if form.phone_number.errors %}
+                            <small class="text-danger">{{ form.phone_number.errors.0 }}</small>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Occupation <span class="text-danger"></span></label>
-                        <input type="text" name="occupation" class="form-control" required>
+                        <input type="text" name="occupation" class="form-control">
+                        {% if form.occupation.errors %}
+                            <small class="text-danger">{{ form.occupation.errors.0 }}</small>
+                        {% endif %}
                     </div>
 
                     <div class="col-12">
                         <label class="form-label fw-semibold">Address <span class="text-danger"></span></label>
-                        <textarea name="address" class="form-control" rows="2" required></textarea>
+                        <textarea name="address" class="form-control" rows="2"></textarea>
+                        {% if form.address.errors %}
+                            <small class="text-danger">{{ form.address.errors.0 }}</small>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Employer Name <span class="text-danger"></span></label>
-                        <input type="text" name="employer_name" class="form-control" required>
+                        <input type="text" name="employer_name" class="form-control">
+                        {% if form.employer_name.errors %}
+                            <small class="text-danger">{{ form.employer_name.errors.0 }}</small>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Payment Plan</label>
                         <input type="text" name="payment_plan" class="form-control">
                         <small class="text-muted">Optional</small>
+                        {% if form.payment_plan.errors %}
+                            <small class="text-danger">{{ form.payment_plan.errors.0 }}</small>
+                        {% endif %}
                     </div>
 
-                    
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Date Registered <span class="text-danger"></span></label>
-                        <input type="date" name="date_registered" class="form-control" value="{% now 'Y-m-d' %}" required>
+                        <input type="date" name="date_registered" class="form-control" value="{% now 'Y-m-d' %}">
                         <small class="text-muted">Default is today's date</small>
+                        {% if form.date_registered.errors %}
+                            <small class="text-danger">{{ form.date_registered.errors.0 }}</small>
+                        {% endif %}
                     </div>
 
                     <div class="col-12 d-flex flex-column flex-sm-row gap-2 mt-2">

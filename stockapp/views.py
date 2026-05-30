@@ -8,11 +8,7 @@ from openpyxl import Workbook
 from django.contrib.auth.decorators import login_required
 from nyondoproject.form_messages import clean_form_errors
 from .forms import StockReceiptForm
-from users.decorators import stock_manager_required
 from users.decorators import admin_required
-
-
-
 
 @login_required
 def stock_receipt_list(request):
