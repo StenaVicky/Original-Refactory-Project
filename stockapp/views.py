@@ -10,6 +10,7 @@ from nyondoproject.form_messages import clean_form_errors
 from .forms import StockReceiptForm
 from users.decorators import admin_required
 
+
 @login_required
 def stock_receipt_list(request):
     receipts = StockReceipt.objects.all().order_by("-date_received")
@@ -20,19 +21,124 @@ def stock_receipt_list(request):
 @login_required
 def create_stock_receipt(request):
     products = Product.objects.all()
-
+    
     if request.method == "POST":
-        form = StockReceiptForm(request.POST)
-        if form.is_valid():
-            receipt = form.save()
-            messages.success(request, "Stock receipt created successfully.")
-            return redirect("goods_received_note", receipt_id=receipt.id)
-        messages.error(request, clean_form_errors(form))
-
-    return render(request, "create_stock_receipt.html", {
-        "products": products
+        # Get form data
+        product_id = request.POST.get('product', '').strip()
+        supplier_name = request.POST.get('supplier_name', '').strip()
+        quantity_received = request.POST.get('quantity_received', '').strip()
+        unit_cost = request.POST.get('unit_cost', '').strip()
+        selling_price = request.POST.get('selling_price', '').strip()
+        supplier_paid = request.POST.get('supplier_paid') == 'on'
+        
+        # Store submitted data
+        form_data = {
+            'product': product_id,
+            'supplier_name': supplier_name,
+            'quantity_received': quantity_received,
+            'unit_cost': unit_cost,
+            'selling_price': selling_price,
+            'supplier_paid': supplier_paid,
+        }
+        
+        errors = {}
+        
+        # Validate Product
+        if not product_id:
+            errors['product'] = "Product is required. Please fill it in."
+        
+        # Validate Supplier Name
+        if not supplier_name:
+            errors['supplier_name'] = "Supplier name is required. Please fill it in."
+        
+        # Validate Quantity Received
+        if not quantity_received:
+            errors['quantity_received'] = "Quantity received is required. Please fill it in."
+        else:
+            try:
+                qty = int(quantity_received)
+                if qty <= 0:
+                    errors['quantity_received'] = "Quantity must be greater than 0."
+            except ValueError:
+                errors['quantity_received'] = "Quantity must be a valid number."
+        
+        # Validate Unit Cost
+        if not unit_cost:
+            errors['unit_cost'] = "Unit cost is required. Please fill it in."
+        else:
+            try:
+                cost = float(unit_cost)
+                if cost <= 0:
+                    errors['unit_cost'] = "Unit cost must be greater than 0."
+            except ValueError:
+                errors['unit_cost'] = "Unit cost must be a valid number."
+        
+        # Validate Selling Price
+        if not selling_price:
+            errors['selling_price'] = "Selling price is required. Please fill it in."
+        else:
+            try:
+                price = float(selling_price)
+                if price <= 0:
+                    errors['selling_price'] = "Selling price must be greater than 0."
+            except ValueError:
+                errors['selling_price'] = "Selling price must be a valid number."
+        
+        # If errors exist, show form with errors
+        if errors:
+            return render(request, 'create_stock_receipt.html', {
+                'products': products,
+                'form_data': form_data,
+                'errors': errors
+            })
+        
+        # Save to database
+        try:
+            product = Product.objects.get(id=product_id)
+            
+            # Update product prices and stock
+            old_unit_cost = product.unit_cost if hasattr(product, 'unit_cost') else None
+            
+            # Create stock receipt
+            receipt = StockReceipt.objects.create(
+                product=product,
+                supplier_name=supplier_name,
+                quantity_received=int(quantity_received),
+                unit_cost=float(unit_cost),
+                selling_price=float(selling_price),
+                supplier_paid=supplier_paid
+            )
+            
+            # Update product's cost and selling price
+            product.unit_cost = float(unit_cost)  # If you have unit_cost field
+            product.unit_price = float(selling_price)  # Selling price
+            product.current_stock += int(quantity_received)
+            product.save()
+            
+            messages.success(request, f"Stock receipt added successfully! Added {quantity_received} units of {product.product_name}")
+            return redirect('stock_receipt_list')
+            
+        except Product.DoesNotExist:
+            errors['product'] = "Selected product does not exist."
+            return render(request, 'create_stock_receipt.html', {
+                'products': products,
+                'form_data': form_data,
+                'errors': errors
+            })
+        except Exception as e:
+            messages.error(request, f"Error saving receipt: {str(e)}")
+            return render(request, 'create_stock_receipt.html', {
+                'products': products,
+                'form_data': form_data,
+                'errors': errors
+            })
+    
+    # GET request - show empty form
+    return render(request, 'create_stock_receipt.html', {
+        'products': products,
+        'form_data': {},
+        'errors': {}
     })
-
 @login_required
 def goods_received_note(request, receipt_id):
     receipt = get_object_or_404(StockReceipt, id=receipt_id)
@@ -79,7 +185,7 @@ def stock_report(request):
     report = []
 
     for product in products:
-        current_stock = product.current_stock
+        current_stock = product.total_received - product.total_sold
 
         if current_stock <= 10:
             status = "Low Stock"

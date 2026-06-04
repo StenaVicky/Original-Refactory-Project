@@ -2,7 +2,6 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .models import SchemeCustomer, SchemePayment, SchemeGoodsPickup
 from saleapp.models import Product, Sales, SaleItem
 from django.db.models import Q
-# from stockapp.models import StockReceipt
 from django.contrib import messages
 # from django.contrib.auth.decorators import login_required
 from nyondoproject.form_messages import clean_form_errors
@@ -70,7 +69,7 @@ def customer_scheme_detail(request, customer_id):
     pickups = SchemeGoodsPickup.objects.filter(customer=customer)
     total_paid = sum(payment.amount_paid for payment in payments)
     total_goods_value = sum(
-      pickup.quantity_taken * pickup.product.unit_price for pickup in pickups  
+    pickup.quantity_taken * pickup.product.unit_price for pickup in pickups  
     )
     balance = total_paid - total_goods_value
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nyondo Hardware System</title>
-        <style>
+    <style>
         
 * {
     margin: 0;
@@ -413,29 +413,61 @@ input[type="number"] {
                     <div class="login-card">
                         <h2 class="mb-2">Login</h2>
                         <p class="text-muted mb-4">Enter your account details to continue.</p>
-                        {% if form.errors %}
+                        
+                        <!-- Display Django form errors (non-field errors) -->
+                        {% if form.non_field_errors %}
+                            {% for error in form.non_field_errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
                         {% endif %}
+                        
+                        <!-- Display Django messages -->
                         {% if messages %}
                             {% for message in messages %}
                                 <div class="error-message">{{ message }}</div>
                             {% endfor %}
                         {% endif %}
-                        <form method="POST">
+                        
+                        <form method="POST" novalidate>
                             {% csrf_token %}
+                            
+                            <!-- Username Field -->
                             <div class="mb-3">
                                 <label class="form-label">Username</label>
                                 <div class="input-group-custom">
                                     <span class="field-icon">👤</span>
-                                    <input type="text" name="username" autofocus autocomplete="username" id="id_username" required>
+                                    <input type="text" name="username" 
+                                           value="{{ form.username.value|default:'' }}"
+                                           class="{% if form.username.errors %}error-input{% endif %}"
+                                           autofocus autocomplete="username" 
+                                           id="id_username">
                                 </div>
+                                <!Dis play username validation errors -->
+                                {% if form.username.errors %}
+                                    {% for error in form.username.errors %}
+                                        <div class="field-validation">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
+                            
+                            <! Password Field >
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
                                 <div class="input-group-custom">
                                     <button type="button" class="toggle-password-btn" id="togglePassword">👁️</button>
-                                    <input type="password" name="password" autocomplete="current-password" id="id_password" required>
+                                    <input type="password" name="password" 
+                                           class="{% if form.password.errors %}error-input{% endif %}"
+                                           autocomplete="current-password" 
+                                           id="id_password">
                                 </div>
+                                <!-- Display password validation errors -->
+                                {% if form.password.errors %}
+                                    {% for error in form.password.errors %}
+                                        <div class="field-validation">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
+                            
                             <button type="submit" class="btn btn-primary w-100">Login</button>
                         </form>
                         <hr>
@@ -444,6 +476,59 @@ input[type="number"] {
             </div>
         </div>
     </div>
-    <script>document.getElementById('togglePassword')?.addEventListener('click',function(){let p=document.getElementById('id_password');p.type=p.type==='password'?'text':'password';});</script>
+    
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword')?.addEventListener('click', function() {
+            let p = document.getElementById('id_password');
+            p.type = p.type === 'password' ? 'text' : 'password';
+        });
+        
+        // Optional: Add client-side validation to prevent empty submission
+        
+        document.querySelector('form')?.addEventListener('submit', function(e) {
+            let username = document.getElementById('id_username');
+            let password = document.getElementById('id_password');
+            let hasError = false;
+            
+            // Clear existing manual error messages (don't remove Django's)
+            document.querySelectorAll('.client-validation').forEach(el => el.remove());
+            
+            if (!username.value.trim()) {
+                showClientError(username, 'Username is required');
+                hasError = true;
+            }
+            
+            if (!password.value) {
+                showClientError(password, 'Password is required');
+                hasError = true;
+            }
+            
+            if (hasError) {
+                e.preventDefault();
+            }
+        });
+        
+        function showClientError(inputElement, message) {
+            // Add error class
+            inputElement.classList.add('error-input');
+            
+            // Check if error already exists
+            let existingError = inputElement.parentElement.parentElement.querySelector('.client-validation');
+            if (!existingError) {
+                let errorDiv = document.createElement('div');
+                errorDiv.className = 'field-validation client-validation';
+                errorDiv.textContent = message;
+                inputElement.parentElement.parentElement.appendChild(errorDiv);
+            }
+            
+            // Remove error when user starts typing
+            inputElement.addEventListener('input', function() {
+                this.classList.remove('error-input');
+                let error = this.parentElement.parentElement.querySelector('.client-validation');
+                if (error) error.remove();
+            });
+        }
+    </script>
 </body>
 </html>

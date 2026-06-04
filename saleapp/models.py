@@ -16,6 +16,7 @@ class Product(models.Model):
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     description = models.TextField()
+    current_stock = models.IntegerField(default=0)  
 
     def __str__(self):
         return self.product_name
@@ -27,11 +28,6 @@ class Product(models.Model):
     @property
     def total_sold(self):
         return self.saleitem_set.aggregate(Sum('quantity'))['quantity__sum'] or 0
-
-    @property
-    def current_stock(self):
-        return self.total_received - self.total_sold
-
 
 class Sales(models.Model):
     product_name = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
@@ -74,5 +70,3 @@ class SaleItem(models.Model):
 
     def __str__(self):
         return f"{self.product.product_name} x {self.quantity}"
-
-

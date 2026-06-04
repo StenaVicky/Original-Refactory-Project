@@ -20,6 +20,13 @@
 
         body {
             color: var(--brand-black);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
         }
 
         .card-header,
@@ -133,7 +140,7 @@
 
         .message-popup .alert {
             border-radius: 8px;
-            box-shadow: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             line-height: 1.45;
             overflow-wrap: anywhere;
             word-break: normal;
@@ -148,45 +155,59 @@
         }
 
         .site-footer {
-            margin-left: 250px;
-            margin-top: 16px;
-            padding: 14px 16px 10px;
             background-color: #1a5f7a;
             color: white;
             text-align: center;
-            font-size: 0.85rem;
+            padding: 20px 0;
+            margin-top: 40px;
         }
 
         .site-footer h6 {
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             color: #e86a2c;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
         .site-footer p {
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
         }
 
         .site-footer hr {
             max-width: 280px;
-            margin: 8px auto;
-            border-color: #ffffff;
+            margin: 12px auto;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .site-footer small {
+            font-size: 0.75rem;
+            opacity: 0.8;
         }
     </style>
 </head>
 
-<body class="bg">
+<body>
 
     {% include 'nav.html' %}
 
     <main class="main-content">
+        
         {% if messages %}
             <div class="message-popup">
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {% if message.tags == 'error' %}
+                            ❌ 
+                        {% elif message.tags == 'success' %}
+                            ✅ 
+                        {% elif message.tags == 'warning' %}
+                            ⚠️ 
+                        {% else %}
+                            ℹ️ 
+                        {% endif %}
                         {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
             </div>
@@ -196,12 +217,12 @@
         {% endblock %}
     </main>
 
+    
     <footer class="site-footer">
         <div class="container">
             <h6>NYONDO Hardware</h6>
-            <p>Nansana-Kampala</p>
-            <p>Tel: +256 759795859</p>
-            
+            <p>Nansana - Kampala, Uganda</p>
+            <p>📞 +256 759 795 859</p>
             <hr>
             <small>&copy; 2026 NYONDO Hardware. All rights reserved.</small>
         </div>
@@ -214,11 +235,18 @@
                 window.history.back();
                 return;
             }
-
             window.location.href = "{% url 'home' %}";
         }
+        
+        // Auto-dismiss messages after 5 seconds
+        setTimeout(function() {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                let bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
     </script>
-
 </body>
 
 </html>

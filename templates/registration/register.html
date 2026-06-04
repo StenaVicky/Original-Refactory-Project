@@ -2,8 +2,6 @@
  {% block title %} Register {% endblock %}
  {% block content %}
 
-
-
 <div
   class="container d-flex justify-content-center align-items-center"
   style="min-height: 80vh"
@@ -11,7 +9,15 @@
   <div class="card shadow p-4" style="width: 450px">
     <h2 class="text-center mb-4">Create Account</h2>
 
-    <!-- Messages -->
+    # Messages Popup - Red for errors, Green for success 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
     {% if messages %} {% for message in messages %}
 
     <div class="alert alert-success alert-dismissible fade show" role="alert">

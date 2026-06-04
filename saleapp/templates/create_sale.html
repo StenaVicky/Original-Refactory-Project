@@ -11,39 +11,91 @@
                 </div>
 
                 <div class="card-body p-4">
+                    {% if non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <form method="POST" id="sale-form">
                         {% csrf_token %}
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-8">
                                 <label class="form-label small fw-medium">Customer Name (optional)</label>
-                                <input type="text" name="customer_name" class="form-control form-control-sm" placeholder="Walk-in Customer">
+                                <input type="text" name="customer_name" class="form-control form-control-sm" value="{{ form_data.customer_name|default:'' }}">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label small fw-medium">Distance</label>
-                                <input type="text" name="distance" class="form-control form-control-sm">
+                                <label class="form-label small fw-medium">Distance (km)</label>
+                                <input type="text" name="distance" class="form-control form-control-sm {% if errors.distance %}is-invalid{% endif %}" value="{{ form_data.distance|default:'' }}">
+                                {% if errors.distance %}
+                                    <div class="invalid-feedback d-block" style="color: red; font-size: 12px; margin-top: 5px;">
+                                        {{ errors.distance }}
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
 
                         <div id="sale-items">
-                            <div class="row g-3 align-items-end sale-item-row">
+                            {% for item in form_data.items %}
+                            <div class="row g-3 align-items-end sale-item-row mb-2">
                                 <div class="col-md-7">
                                     <label class="form-label small fw-medium">Product</label>
-                                    <select name="product" class="form-select form-select-sm">
+                                    <select name="product[]" class="form-select form-select-sm {% if item.product_error %}is-invalid{% endif %}">
                                         <option value="">Select product</option>
                                         {% for product in products %}
-                                        <option value="{{ product.id }}">{{ product.product_name }} | {{ product.category_name.category_name }} | {{ product.unit_price }} | Stock {{ product.current_stock }}</option>
+                                        <option value="{{ product.id }}" {% if item.product == product.id|stringformat:"s" %}selected{% endif %}>
+                                            {{ product.product_name }} | {{ product.category_name.category_name }} | UGX {{ product.unit_price }} | Stock: {{ product.current_stock }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if item.product_error %}
+                                        <div class="invalid-feedback d-block" style="color: red; font-size: 12px;">
+                                            {{ item.product_error }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-medium">Quantity</label>
+                                    <input type="text" name="quantity[]" class="form-control form-control-sm {% if item.quantity_error %}is-invalid{% endif %}" value="{{ item.quantity|default:'1' }}">
+                                    {% if item.quantity_error %}
+                                        <div class="invalid-feedback d-block" style="color: red; font-size: 12px;">
+                                            {{ item.quantity_error }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    {% if forloop.counter0 > 0 %}
+                                        <button type="button" class="btn btn-outline-danger btn-sm remove-item">Remove</button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-outline-danger btn-sm remove-item" style="display: none;">Remove</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="row g-3 align-items-end sale-item-row mb-2">
+                                <div class="col-md-7">
+                                    <label class="form-label small fw-medium">Product</label>
+                                    <select name="product[]" class="form-select form-select-sm">
+                                        <option value="">Select product</option>
+                                        {% for product in products %}
+                                        <option value="{{ product.id }}">
+                                            {{ product.product_name }} | {{ product.category_name.category_name }} | UGX {{ product.unit_price }} | Stock: {{ product.current_stock }}
+                                        </option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label small fw-medium">Quantity</label>
-                                    <input type="text" name="quantity" class="form-control form-control-sm" value="1">
+                                    <input type="text" name="quantity[]" class="form-control form-control-sm" value="1">
                                 </div>
                                 <div class="col-md-2 text-end">
                                     <button type="button" class="btn btn-outline-danger btn-sm remove-item" style="display: none;">Remove</button>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
 
                         <div class="mb-4">
@@ -67,20 +119,20 @@ const addItemButton = document.getElementById('add-item');
 
 function createSaleItemRow() {
     const row = document.createElement('div');
-    row.className = 'row g-3 align-items-end sale-item-row';
+    row.className = 'row g-3 align-items-end sale-item-row mb-2';
     row.innerHTML = `
         <div class="col-md-7">
             <label class="form-label small fw-medium">Product</label>
-            <select name="product" class="form-select form-select-sm">
+            <select name="product[]" class="form-select form-select-sm">
                 <option value="">Select product</option>
                 {% for product in products %}
-                <option value="{{ product.id }}">{{ product.product_name }} | {{ product.category_name.category_name }} | {{ product.unit_price }} | Stock {{ product.current_stock }}</option>
+                <option value="{{ product.id }}">{{ product.product_name }} | {{ product.category_name.category_name }} | UGX {{ product.unit_price }} | Stock: {{ product.current_stock }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="col-md-3">
             <label class="form-label small fw-medium">Quantity</label>
-            <input type="text" name="quantity" class="form-control form-control-sm" value="1">
+            <input type="text" name="quantity[]" class="form-control form-control-sm" value="1">
         </div>
         <div class="col-md-2 text-end">
             <button type="button" class="btn btn-outline-danger btn-sm remove-item">Remove</button>

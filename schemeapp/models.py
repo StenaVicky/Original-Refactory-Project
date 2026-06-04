@@ -1,7 +1,7 @@
 from django.db import models 
 from django.utils import timezone
 from saleapp.models import Sales, Product
-# from django.core.validators import RegexValidator
+
 
 
 # Create your models here.

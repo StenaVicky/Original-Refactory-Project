@@ -2,6 +2,7 @@ from django.db import models
 from saleapp.models import Product
 
 
+
 # Create your models here.
 class StockReceipt(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -13,6 +14,8 @@ class StockReceipt(models.Model):
     supplier_paid = models.BooleanField(default=False)
     date_received = models.DateTimeField(auto_now_add=True)
     re_order_level = models.IntegerField(default=10)
+    current_stock = models.IntegerField(default=0)  
+    
 
     def save(self, *args, **kwargs):
         self.total_amount = self.quantity_received * self.unit_cost

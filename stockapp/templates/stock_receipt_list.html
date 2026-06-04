@@ -1,108 +1,60 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
+
 {% block content %}
 
-<div class="sidebar">
-
-    {% if user.is_superuser %}
-        
-    {% endif %}
-
-    <a href="{% url 'stock_receipt_list' %}">
-        <i class="bi bi-box-seam"></i> Stock
-    </a>
-     {% if user.is_superuser %}
-        <a href="{% url 'dashboard' %}">
-                <i class="bi bi-speedometer2"></i> Dashboard
-            </a>
-
-        <a href="{% url 'home' %}">
-            <i class="bi bi-cart"></i> Sales
-        </a>
-
-            <a href="{% url 'category_list' %}">
-                <i class="bi bi-grip-horizontal"></i> Categories
-            </a>
-
-            <a href="{% url 'product_list' %}">
-                <i class="bi bi-box"></i> Products
-            </a>
-
-            <a href="{% url 'scheme_customer_list' %}">
-                <i class="bi bi-percent"></i> Schemes
-            </a>
-
-            <a href="{% url 'supplier_report' %}">
-                <i class="bi bi-truck me-2"></i> Supplier Report
-            </a>
-
-            <a href="{% url 'customer_report' %}">
-                <i class="bi bi-person me-2"></i> Customer Report
-            </a>
-    {% endif %}
-
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Stock Received</h2>
 </div>
 
-<div class="card mb-4" style="background-color: #1a5f7a; color: white;">
-         <div class="card-body">
-            <h3 class="mb-0"><i class="bi bi-grid"></i> Stock Received</h3>
-            <small>Stock received to NYONDO Hardware</small>
+<div class="d-flex justify-content-end gap-2 mb-3">
+            <a href="{% url 'create_stock_receipt' %}" class="btn btn-success">Record Stock Received</a>
+            <a href="{% url 'stock_report' %}" class="btn btn-success">Stock Report</a>
         </div>
-
-</div>
-<div class="d-flex justify-content-end gap-2 mb-2">
-<a href="{% url 'create_stock_receipt'%}" class="btn btn-primary">Record Stock Received</a>
-<a href="{% url 'stock_report'%}" class=" btn btn-primary">Stock Report</a>
-</div>
 
 <table class="table table-bordered table-striped shadow-sm">
     <thead class="table-dark">
         <tr>
             <th>Product</th>
             <th>Supplier</th>
-            <th>Quantity Received</th>
-            <th>Current Stock</th>
-            <th> Unit Cost</th>
+            <th>Quantity</th>
+            <th>Unit Cost</th>
             <th>selling_price</th>
-            <th>Total Due</th>
-            <th>Paid</th>
+            <th>Total</th>
+            <th>Paid?</th>
             <th>Date</th>
-            <th>Action</th>
+            <th>Actions</th>
         </tr>
-
     </thead>
+
     <tbody>
         {% for receipt in receipts %}
         <tr>
-            <td>{{ receipt.product.product_name}}</td>
-            <td>{{ receipt.supplier_name}}</td>
-            <td>{{ receipt.quantity_received}}</td>
-            <td>{{ receipt.product.current_stock }}</td>
-            <td>{{ receipt.unit_cost}}</td>
-            <td>{{receipt.selling_price}}</td>
-            <td>{{receipt.total_amount}}</td>
+            <td>{{ receipt.product.product_name }}</td>
+            <td>{{ receipt.supplier_name }}</td>
+            <td>{{ receipt.quantity_received }}</td>
+            <td>{{ receipt.unit_cost }}</td>
+            <td>{{ receipt.selling_price }}</td>
+            <td>{{ receipt.total_amount}}</td>
             <td>
                 {% if receipt.supplier_paid %}
-                <span class="badge bg-success">Paid</span>
+                    <span class="badge bg-success">Paid</span>
                 {% else %}
-                <span class="badge bg-danger">Not Paid</span>
+                    <span class="badge bg-danger">Not Paid</span>
                 {% endif %}
-
             </td>
-            <td>{{ receipt.date_received|date:"j F Y," }}</td>
+            <td>{{ receipt.date_received|date:"j F Y, H:i" }}</td>
             <td>
-            <a href="{% url 'goods_received_note' receipt.id %}" class="btn btn-dark btn-sm">GRN</a>
-            <a href="{% url 'edit_stock_receipt' receipt.id %}" class="btn btn-primary btn-sm"><i class="bi bi-pencil"></i></a>
-            <a href="{% url 'delete_stock_receipt' receipt.id %}" class="btn btn-dark btn-sm"><i class="bi bi-trash"></i></a>
-</td>
+                <a href="{% url 'goods_received_note' receipt.id %}" class="btn btn-dark btn-sm">GRN</a>
+                <a href="{% url 'edit_stock_receipt' receipt.id %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'delete_stock_receipt' receipt.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="10" class="text_centre">No stock Found</td>
-
+            <td colspan="8" class="text-center">No stock receipts found.</td>
         </tr>
         {% endfor %}
-
     </tbody>
-
 </table>
+
 {% endblock %}

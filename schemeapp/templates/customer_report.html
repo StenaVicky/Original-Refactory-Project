@@ -4,6 +4,25 @@
 {% block title %}Customer Report{% endblock %}
 
 {% block content %}
+<style>
+@media print {
+    nav,footer,.no-print {
+        display: none !important;
+    }
+
+    body{
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff;
+    }
+    .receipt-container{
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        width: 100%;
+    }
+}
+</style>
 <div class="container">
 
     <h3 class="mb-3" style="color: #1a5f7a;"><i class="bi bi-grid"></i> Customer Report</h3>
@@ -11,32 +30,30 @@
     
     <div class="row mb-3">
         <div class="col-md-3">
-            <div class="alert alert-primary text-center" style="background-color: #1a5f7a;">
+            <div class="alert text-center" style="border-top: 4px solid #e86a2c; border-radius: 10px;">
                 Total Customers<br>
                 <strong style="font-size: 20px;">{{ total_customers|default:0 }}</strong>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="alert text-center" style="background-color: #1a5f7a; color: white;">
+            <div class="alert text-center"style="border-top: 4px solid #1a5f7a; border-radius: 10px;">
                 Total Deposits<br>
                 <strong>UGX {{ total_deposits|floatformat:0|intcomma }}</strong>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="alert alert-secondary text-center" style="background-color: #1a5f7a;">
+            <div class="alert text-center" style="border-top: 4px solid #e86a2c; border-radius: 10px;">
                 Total Withdrawn<br>
                 <strong>UGX {{ total_withdrawn|floatformat:0|intcomma }}</strong>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="alert text-center" style="background-color: #1a5f7a; color: white;">
+            <div class="alert text-center"style="border-top: 4px solid #1a5f7a; border-radius: 10px; ">
                 Total Balance<br>
                 <strong>UGX {{ total_balance|floatformat:0|intcomma }}</strong>
             </div>
         </div>
     </div>
-
-    
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
             <tr>

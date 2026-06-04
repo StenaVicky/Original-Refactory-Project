@@ -1,6 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+@media print {
+    nav,footer,.no-print {
+        display: none !important;
+    }
+
+    body{
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff;
+    }
+    .receipt-container{
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        width: 100%;
+    }
+}
+</style>
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">

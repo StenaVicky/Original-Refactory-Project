@@ -82,9 +82,12 @@
     footer {
         margin-left: 250px;
     }
+
+    border-radius: 8px;
+}
 </style>
 
-<!-- Navbar -->
+<! Navbar >
 <nav class="navbar navbar-dark top-navbar fixed-top">
 
     <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -97,9 +100,10 @@
                 aria-label="Go back"
                 title="Go back">
                 <i class="bi bi-arrow-left"></i>
+                
             </button>
 
-            <!-- Logo -->
+            <! Logo >
             <a href="{% url 'home' %}"
                class="navbar-brand fw-bold d-flex align-items-center">
 
@@ -114,7 +118,7 @@
             </a>
         </div>
 
-        <!-- User Section -->
+        <! User Section >
         <div class="d-flex align-items-center">
 
             {% if user.is_authenticated %}
@@ -156,7 +160,7 @@
 
 </nav>
 
-<!sidebar>
+
 <div class="sidebar">
 {% if user.is_superuser %}
         
@@ -180,7 +184,7 @@
             </a>
 
             <a href="{% url 'stock_receipt_list' %}">
-                <i class="bi bi-box-seam"></i> Stock
+                <i class="bi bi-list-ul"></i> Stock
             </a>
 
             <a href="{% url 'scheme_customer_list' %}">
